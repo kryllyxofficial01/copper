@@ -1,4 +1,4 @@
-from interpreter.lexer import Lexer
+import interpreter.lexer as lex
 
 print("Enter filepath:")
 filepath = input("> ")
@@ -8,10 +8,9 @@ with open(filepath, 'r') as f:
 	for line in f.readlines():
 		lines.append(line)
 
-tokens = []
+lexer = lex.build()
 
 for line in lines:
-	lexer = Lexer(line)
-	token = lexer.generate_tokens()
-	tokens.append(list(token))
-	print(tokens)
+    lexer.input(line)
+    for token in lexer:
+        print(f"{token.type}: {token.value} | {token.lineno}")

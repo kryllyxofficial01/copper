@@ -1,74 +1,50 @@
-from interpreter.tokens import Token, TokenTypes
+import ply.lex as lex
 
-WHITESPACE = " \n\t"
-LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-DIGITS = "0123456789"
-BOOLCHARS = "truefals"
+reserved = {
+    "out": "OUTPUT",
+    "true": "BOOLEAN",
+    "false": "BOOLEAN",
+}
 
-class Lexer:
-    def __init__(self, text):
-        self.text = iter(text)
-        self.next_char()
-        self.num_quotes = 0
-        
-    def generate_tokens(self):
-        while self.current_char != None:
-            if self.current_char in WHITESPACE:
-                self.next_char()
-            elif self.current_char == '"':
-                yield self.generate_string()
-            elif self.current_char in DIGITS:
-                yield self.generate_integer()
-            elif self.current_char == "t" or self.current_char == "f":
-                yield self.generate_bool()
-    
-    def next_char(self):
-        try:
-            self.current_char = next(self.text)
-        except StopIteration:
-            self.current_char = None
-            
-    def generate_string(self):
-        num_quotes = 0
-        
-        string = self.current_char
-        self.next_char()
-  
-        while self.current_char != None and (self.current_char == '"' or self.current_char in LETTERS):
-            if self.current_char == '"':
-                num_quotes += 1
-                if num_quotes > 2:
-                    break
-            
-            string += self.current_char
-            self.next_char()
-            
-        if string.startswith('"') == False or string.endswith('"') == False:
-            pass
-        
-        return Token(TokenTypes.STRING, string)
-    
-    def generate_integer(self):
-        integer = self.current_char
-        self.next_char()
-        
-        while self.current_char != None and self.current_char in DIGITS:
-            integer += self.current_char
-            self.next_char()
-            
-        return Token(TokenTypes.INTEGER, integer)
-    
-    def generate_bool(self):
-        boolean = self.current_char
-        self.next_char()
-        
-        while self.current_char != None and self.current_char in BOOLCHARS:
-            boolean += self.current_char
-            self.next_char()
-        
-        if boolean == "true":
-            return Token(TokenTypes.BOOLEAN, boolean)
-        elif boolean == "false":
-            return Token(TokenTypes.BOOLEAN, boolean)
-        else:
-            pass
+tokens = [
+    "OUTPUT",
+    "STRING",
+    "INTEGER",
+    "BOOLEAN",
+    "FLOAT",
+    "LPAREN",
+    "RPAREN",
+    "DOUBLEQUOTE",
+]
+
+t_LPAREN = r"\("
+t_RPAREN = r"\)"
+t_DOUBLEQUOTE = r"\""
+t_ignore = " \t"
+
+def t_OUTPUT(t):
+    r"out\(\"\w\"\)"
+    t.type = reserved.get(t.value, "OUTPUT")
+    return t
+
+def t_STRING(t):
+    r"[A-Za-z0-9]+"
+    t.value = str(t.value)
+    return t
+
+def t_INTEGER(t):
+    r"[0-9]+"
+    t.value = int(t.value)
+    return t
+
+def t_newline(t):
+    r"\n+"
+    t.lexer.lineno += len(t.value)
+
+def t_error(t):
+    print(f"Illegal character '{t.value[0]}'")
+    t.lexer.skip(1)
+
+def build():
+    lexer = lex.lex()
+    return lexer
