@@ -12,3 +12,4 @@ i = 1
 for line in lines:
     tokens = lexer.build(line, filepath, i)
     print(tokens)
+    i += 1
