@@ -15,4 +15,10 @@ class Lexer:
 			self.current_char = None
 
     def generate_tokens(self):
-        pass
+        tokens = []
+        
+        while self.current_char != None:
+            if self.current_char in " \t":
+                self.next_char()
+        
+        return tokens

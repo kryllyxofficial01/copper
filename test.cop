@@ -1,4 +1,1 @@
-"test"
-123
-4.56
-true
+exec out("it works")
