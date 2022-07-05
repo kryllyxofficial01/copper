@@ -1,12 +1,16 @@
+import sys
 import interpreter.token as token
+import interpreter.error as error
 
-WHITESPACE = " \t"
+WHITESPACE = " \n\t"
 DIGITS = "0123456789."
 OPERANDS = "+-*/"
 
 class Lexer:
-	def __init__(self, line):
+	def __init__(self, line, file, lineno):
 		self.text = line
+		self.file = file
+		self.lineno = lineno
 		self.current_index = -1
 		self.current_char = None
 
@@ -47,8 +51,9 @@ class Lexer:
 				tokens.append(token.Token(token.RPAREN, self.current_char))
 				self.next_char()
 			else:
-				tokens.append(token.Token(token.ILLEGALCHAR, self.current_char))
-				self.next_char()
+				ice = error.Error("IllegalCharacterError", f"Unknown character '{self.current_char}'", self.file, self.text, self.lineno)
+				ice.print_stacktrace()
+				sys.exit()
 
 		return tokens
 
@@ -70,7 +75,7 @@ class Lexer:
 		else:
 			return token.Token(token.INTEGER, int(number))
 
-def build(line):
-    lexer = Lexer(line)
+def build(line, file, lineno):
+    lexer = Lexer(line, file, lineno)
     tokens = lexer.generate_tokens()
     return tokens
