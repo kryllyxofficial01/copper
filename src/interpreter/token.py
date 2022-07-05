@@ -1,12 +1,16 @@
-PROCESSS = "PROCESS"
 CMD = "CMD"
 STRING = "STRING"
 INTEGER = "INTEGER"
 BOOLEAN = "BOOLEAN"
 FLOAT = "FLOAT"
-LPAREN = "("
-RPAREN = ")"
+LPAREN = "LPAREN"
+RPAREN = "RPAREN"
 DOUBLEQUOTE = "DOUBLEQUOTE"
+PLUS = "PLUS"
+MINUS = "MINUS"
+ASTERICK = "ASTERICK"
+FORWARDSLASH = "FORWARDSLASH"
+ILLEGALCHAR = "ILLEGALCHAR"
 
 class Token:
     def __init__(self, token_type, value=None):
@@ -14,7 +18,4 @@ class Token:
         self.value = value
         
     def __repr__(self):
-        if self.value:
-            return f"{self.type}: {self.value}"
-        else:
-            return self.type
+        return f"{self.type}: {self.value}"
