@@ -25,25 +25,30 @@ class Lexer:
 		
 		while self.current_char != None:
 			if self.current_char in WHITESPACE:
-				pass
+				self.next_char()
 			elif self.current_char in DIGITS:
 				tokens.append(self.generate_number())
 			elif self.current_char == "+":
 				tokens.append(token.Token(token.PLUS, self.current_char))
+				self.next_char()
 			elif self.current_char == "-":
 				tokens.append(token.Token(token.MINUS, self.current_char))
+				self.next_char()
 			elif self.current_char == "*":
 				tokens.append(token.Token(token.ASTERICK, self.current_char))
+				self.next_char()
 			elif self.current_char == "/":
 				tokens.append(token.Token(token.FORWARDSLASH, self.current_char))
+				self.next_char()
 			elif self.current_char == "(":
 				tokens.append(token.Token(token.LPAREN, self.current_char))
+				self.next_char()
 			elif self.current_char == ")":
 				tokens.append(token.Token(token.RPAREN, self.current_char))
+				self.next_char()
 			else:
 				tokens.append(token.Token(token.ILLEGALCHAR, self.current_char))
-
-			self.next_char()
+				self.next_char()
 
 		return tokens
 
@@ -56,7 +61,7 @@ class Lexer:
 				num_decimals += 1
 				if num_decimals > 1:
 					break
-			
+
 			number += self.current_char
 			self.next_char()
 		
