@@ -13,3 +13,11 @@ class OperandNode:
 
 	def __repr__(self):
 		return f"({self.x}, {self.token}, {self.y})"
+
+class UnaryNode:
+    def __init__(self, token, node):
+        self.token = token
+        self.node = node
+    
+    def __repr__(self):
+        return f"({self.token}, {self.node})"

@@ -28,10 +28,34 @@ class Parser:
     def factor(self):
         result = ParserResult()
         token = self.current_token
+        
+        if token.type in (Token.PLUS, Token.MINUS):
+            result.register(self.next_token())
+            factor = result.register(self.factor())
+            
+            if result.error:
+                return result
+            else:
+                return result.check(node=nodes.UnaryNode(token, factor))
 
-        if token.type in (Token.INTEGER, Token.FLOAT):
+        elif token.type in (Token.INTEGER, Token.FLOAT):
             result.register(self.next_token())
             return result.check(node=nodes.NumberNode(token))
+        
+        elif token.type == Token.LPAREN:
+            result.register(self.next_token())
+            expression = result.register(self.expression())
+            
+            if result.error:
+                return result
+            else:
+                if self.current_token.type == Token.RPAREN:
+                    result.register(self.next_token())
+                    return result.check(node=expression)
+                else:
+                    ise = error.Error("InvalidSyntaxError", "Expected ')'", self.file, self.line, self.lineno)
+                    result.check(error="InvalidSyntaxErrror")
+                    ise.print_stacktrace()
         
         else:
             ise = error.Error("InvalidSyntaxError", "Expected type 'int' or 'float'", self.file, self.line, self.lineno)

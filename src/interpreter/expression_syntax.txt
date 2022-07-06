@@ -2,3 +2,5 @@
 expression : term ((PLUS|MINUS) term)*
 term : factor ((ASTERICK|FORWARDSLASH) factor)*
 factor : INT|FLOAT
+	   : (PLUS|MINUS) factor
+	   : LPAREN expression RPAREN
