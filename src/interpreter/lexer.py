@@ -1,6 +1,7 @@
 import interpreter.tokens as token
 import interpreter.errors as errors
 from interpreter.parser import Parser
+from interpreter.interpreter import Interpreter
 
 WHITESPACE = " \n\t"
 DIGITS = "0123456789."
@@ -82,4 +83,7 @@ def build(line, file, lineno):
     parser = Parser(tokens, file, line, lineno)
     ast = parser.build()
     
-    return ast.node
+    interpreter = Interpreter(file, line, lineno)
+    result = interpreter.iterate_node(ast.node)
+    
+    return result
