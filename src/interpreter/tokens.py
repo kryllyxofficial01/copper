@@ -10,7 +10,7 @@ PLUS = "PLUS"
 MINUS = "MINUS"
 ASTERICK = "ASTERICK"
 FORWARDSLASH = "FORWARDSLASH"
-ILLEGALCHAR = "ILLEGALCHAR"
+EOF = "EOF"
 
 class Token:
     def __init__(self, token_type, value=None):

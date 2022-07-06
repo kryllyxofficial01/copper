@@ -1,6 +1,6 @@
-import sys
-import interpreter.token as token
-import interpreter.error as error
+import interpreter.tokens as token
+import interpreter.errors as errors
+from interpreter.parser import Parser
 
 WHITESPACE = " \n\t"
 DIGITS = "0123456789."
@@ -51,10 +51,10 @@ class Lexer:
 				tokens.append(token.Token(token.RPAREN, self.current_char))
 				self.next_char()
 			else:
-				ice = error.Error("IllegalCharacterError", f"Unknown character '{self.current_char}'", self.file, self.text, self.lineno)
+				ice = errors.Error("IllegalCharacterError", f"Unknown character '{self.current_char}'", self.file, self.text, self.lineno)
 				ice.print_stacktrace()
-				sys.exit()
 
+		tokens.append(token.Token(token.EOF))
 		return tokens
 
 	def generate_number(self):
@@ -78,4 +78,8 @@ class Lexer:
 def build(line, file, lineno):
     lexer = Lexer(line, file, lineno)
     tokens = lexer.generate_tokens()
-    return tokens
+    
+    parser = Parser(tokens, file, line, lineno)
+    ast = parser.build()
+    
+    return ast.node
