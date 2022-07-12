@@ -1,1 +1,1 @@
-10 / 0
+exec out("print statement")

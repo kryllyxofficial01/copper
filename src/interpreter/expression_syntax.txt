@@ -1,6 +1,0 @@
-# This is the syntax that the numbers follow when doing math.
-expression : term ((PLUS|MINUS) term)*
-term : factor ((ASTERICK|FORWARDSLASH) factor)*
-factor : INT|FLOAT
-	   : (PLUS|MINUS) factor
-	   : LPAREN expression RPAREN

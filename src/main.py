@@ -1,15 +1,19 @@
-import interpreter.lexer as lexer
+from copper.lexer import Lexer
 
 print("Enter filepath:")
-filepath = input("> ")
+filepath = input(">>> ")
 
-lines = []
-with open(filepath, 'r') as f:
-	for line in f.readlines():
-		lines.append(line)
+file = open(filepath, 'r')
+contents = file.readlines()
 
-i = 1
-for line in lines:
-    tokens = lexer.build(line, filepath, i)
-    print(tokens)
-    i += 1
+for line in contents:
+    line = list(line)
+    line.pop()
+    line = str(line)
+
+lineno = 1
+for line in contents:
+    lexer = Lexer(line, lineno, filepath)
+    tokens = lexer.lex()
+    
+    lineno += 1
