@@ -1,1 +1,3 @@
 exec out("print statement")
+exec in("input ")
+set name = "Kryllyx"
