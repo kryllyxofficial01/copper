@@ -16,7 +16,9 @@ class Lexer:
         if self.line[:4] == "exec":
             self.tokens["KEYWORD"] = "exec"
             command = list(self.line)
-            command.pop()
+            
+            if command[-1] == "\n":
+                command.pop()
             
             for char in "exec":
                 command.remove(char)
@@ -85,7 +87,7 @@ class Lexer:
                 args += command[i]
                 i += 1
             
-            self.tokens["STRING"] = "".join(args)
+            self.tokens["ARGS"] = "".join(args)
             self.tokens["RPAREN"] = ")"
         
         else:
@@ -108,7 +110,7 @@ class Lexer:
                 args += command[i]
                 i += 1
             
-            self.tokens["STRING"] = "".join(args)
+            self.tokens["ARGS"] = "".join(args)
             self.tokens["RPAREN"] = ")"
             
         else:

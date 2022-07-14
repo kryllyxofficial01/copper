@@ -1,3 +1,4 @@
+from copper.interpreter import Interpreter
 from copper.lexer import Lexer
 
 print("Enter filepath:")
@@ -5,14 +6,6 @@ filepath = input(">>> ")
 
 file = open(filepath, 'r')
 contents = file.readlines()
-
-for line in contents:
-    line = list(line)
-    
-    if line[-1] == "\n":
-        line.pop()
-        
-    line = "".join(line)
 
 lineno = 1
 for line in contents:
@@ -23,6 +16,7 @@ for line in contents:
         lexer = Lexer(line, lineno, filepath)
         tokens = lexer.lex()
     
-    print(tokens)
+        interpreter = Interpreter(tokens, line, lineno, filepath)
+        interpreter.interpret()
         
     lineno += 1
