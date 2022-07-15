@@ -10,12 +10,67 @@ class Interpreter:
         self.file = file
     
     def interpret(self):
+        if self.line[-1] == "\n":
+            line = list(self.line)
+            line.pop()
+
+            self.line = "".join(line)
+        
         if self.tokens["KEYWORD"] == "exec":
             if self.tokens["COMMAND"] == "out":
                 args = Object(self.tokens["ARGS"], self.line, self.lineno, self.file)
                 
                 if args.isString():
-                    print(args.toString())
+                    output = args.toString()
+                    
+                    if "$<" in output:
+                        content = list(output)
+                        
+                        i = 0
+                        first_part = ""
+                        while content[i] != "$":
+                            first_part += content[i]
+                            i += 1
+                        
+                        for char in first_part:
+                            content.remove(char)
+
+                        content.remove("$")
+                        content.remove("<")
+                        
+                        i = 0
+                        var_name = ""
+                        while True:
+                            if var_name != "".join(content):
+                                if content[i] != ">":
+                                    var_name += content[i]
+                                    i += 1
+                            
+                                else:
+                                    break
+                            
+                            else:
+                                error = Error("SyntaxError", "Unterminated variable reference", self.line, self.lineno, self.file)
+                                error.print_stacktrace()
+                        
+                        try:
+                            for char in var_name:
+                                content.remove(char)
+                            
+                            if content[-1] == ">":
+                                print(f"{first_part}{self.vars[var_name]}")
+                            else:
+                                content.remove(">")
+                                second_part = "".join(content)
+                                print(f"{first_part}{self.vars[var_name]}{second_part}")
+                        
+                        except KeyError:
+                            error = Error("VarRefError", f"Unknown variable \"{var_name}\"", self.line, self.lineno, self.file)
+                            error.print_stacktrace()
+                    
+                    else:
+                        print(output)
+                    
                 else:
                     pass
             
@@ -57,6 +112,9 @@ class Interpreter:
                         for char in "in":
                             content.remove(char)
                         
+                        if content[-1] == "\n":
+                            content.pop()
+                        
                         if content[0] == "(" and content[-1] == ")":
                             content.remove("(")
                             
@@ -97,5 +155,3 @@ class Interpreter:
                 
                 if content.isString():
                     self.vars[self.tokens["VARNAME"]] = content.toString()
-            
-            print(self.vars)

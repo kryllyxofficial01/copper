@@ -1,4 +1,2 @@
-exec out("print statement")
-exec in("input ")
-
 set name = exec in("What's your name? ")
+exec out("Hello, $<name>!")
