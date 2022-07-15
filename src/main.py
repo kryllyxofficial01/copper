@@ -7,6 +7,8 @@ filepath = input(">>> ")
 file = open(filepath, 'r')
 contents = file.readlines()
 
+vars = {}
+
 lineno = 1
 for line in contents:
     if line == "\n" or line[:2] == "//":
@@ -16,7 +18,7 @@ for line in contents:
         lexer = Lexer(line, lineno, filepath)
         tokens = lexer.lex()
     
-        interpreter = Interpreter(tokens, line, lineno, filepath)
+        interpreter = Interpreter(tokens, vars, line, lineno, filepath)
         interpreter.interpret()
-        
+
     lineno += 1

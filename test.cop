@@ -1,4 +1,4 @@
 exec out("print statement")
 exec in("input ")
 
-set name = "Kryllyx"
+set name = exec in("What's your name? ")

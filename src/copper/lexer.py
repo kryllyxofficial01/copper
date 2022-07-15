@@ -1,4 +1,3 @@
-import keyword
 from copper.error import Error
 
 DIGITS = "0123456789"
