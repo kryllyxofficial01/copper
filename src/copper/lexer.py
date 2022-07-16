@@ -1,8 +1,5 @@
 from copper.error import Error
 
-DIGITS = "0123456789"
-LETTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
 class Lexer:
     def __init__(self, line, lineno, file):
         self.line = line
