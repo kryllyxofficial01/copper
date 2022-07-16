@@ -13,11 +13,11 @@ lineno = 1
 for line in contents:
     if line == "\n" or line[:2] == "//":
         pass
-    
+
     else:
         lexer = Lexer(line, lineno, filepath)
         tokens = lexer.lex()
-    
+
         interpreter = Interpreter(tokens, vars, line, lineno, filepath)
         interpreter.interpret()
 
