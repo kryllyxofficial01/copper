@@ -18,3 +18,6 @@ else:
 			line.pop()
 		
 		lexer = Lexer(line, lineno, filepath)
+		tokens = lexer.lex()
+  
+		print(tokens)
