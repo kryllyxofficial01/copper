@@ -1,24 +1,20 @@
-from copper.interpreter import Interpreter
 from copper.lexer import Lexer
 
 print("Enter filepath:")
 filepath = input(">>> ")
 
-file = open(filepath, 'r')
-contents = file.readlines()
+try:
+	file = open(filepath, 'r')
+except FileNotFoundError:
+    print(f"\033[0;31m\nUnknownFileError: Couldn't find the file \"{filepath}\"\033[0m\n")
+else:
+	contents = file.readlines()
 
-vars = {}
-
-lineno = 1
-for line in contents:
-    if line == "\n" or line[:2] == "//":
-        pass
-
-    else:
-        lexer = Lexer(line, lineno, filepath)
-        tokens = lexer.lex()
-
-        interpreter = Interpreter(tokens, vars, line, lineno, filepath)
-        interpreter.interpret()
-
-    lineno += 1
+	lineno = 1
+	for line in contents:
+		line = list(line)
+		
+		if line[-1] == "\n":
+			line.pop()
+		
+		lexer = Lexer(line, lineno, filepath)

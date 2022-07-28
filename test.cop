@@ -1,2 +1,1 @@
-set name = exec in("What's your name? ")
-exec out("Hello, $<name>!")
+exec out("test")
