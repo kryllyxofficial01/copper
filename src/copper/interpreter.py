@@ -18,4 +18,4 @@ class Interpreter:
 						string.pop(0)
 						string.pop(-1)
 
-						# print("".join(string))
+						print("".join(string))
