@@ -80,9 +80,14 @@ class Lexer:
         else:
             i = 0
             keyword = ""
-            while self.line[i] != " " or keyword != "".join(self.line):
-                keyword += self.line[i]
-                i += 1
+            while True:
+                if self.line[i] == "(" or keyword == "".join(self.line):
+                    break
+
+                else:
+                    keyword += self.line[i]
+                    i += 1
+                    continue
 
             keyworderror = Error(
                 "KeywordError",
