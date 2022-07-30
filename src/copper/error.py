@@ -1,3 +1,4 @@
+import os
 import sys
 
 class Error:
@@ -6,7 +7,7 @@ class Error:
 		self.reason = reason
 		self.line = line
 		self.lineno = lineno
-		self.file = file
+		self.file = os.path.abspath(os.path.join(file, os.pardir)) + f"/{file}"
 
 	def print_stacktrace(self) -> None:
 		print(f"\033[0;31m\nError - at line {self.lineno} in file \"{self.file}\"")
