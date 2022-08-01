@@ -3,9 +3,9 @@ from copper.object import Object
 from copper.lexer import Lexer
 
 class Interpreter:
-	def __init__(self, tokens: dict, vars: dict, line: str, lineno: int, file: str) -> None:
+	def __init__(self, tokens: dict, line: str, lineno: int, file: str) -> None:
 		self.tokens = tokens
-		self.vars = vars
+		self.vars = {}
 		self.line = line
 		self.lineno = lineno
 		self.file = file
