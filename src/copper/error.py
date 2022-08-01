@@ -2,7 +2,7 @@ import os
 import sys
 
 class Error:
-	def __init__(self, error_name, reason, line, lineno, file) -> None:
+	def __init__(self, error_name: str, reason: str, line: str, lineno: int, file: str) -> None:
 		self.error_name = error_name
 		self.reason = reason
 		self.line = line

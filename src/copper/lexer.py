@@ -1,11 +1,14 @@
 from copper.error import Error
 
 class Lexer:
-    def __init__(self, line: list, lineno: int, file: str) -> None:
-        self.line = line
+    def __init__(self, line: list, lineno: int, file: str, content: list=[]) -> None:
+        if content:
+            self.line = content
+        else:
+            self.line = line
+
         self.lineno = lineno
         self.file = file
-        
         self.full_line = "".join(line)
         self.tokens = {}
     
@@ -30,6 +33,31 @@ class Lexer:
                         self.line.pop()
 
                         self.tokens["OUTPUT"] = "".join(self.line)
+
+                        return self.tokens
+
+                    else:
+                        syntaxerror = Error(
+                            "SyntaxError",
+                            "Missing parentheses",
+                            self.full_line,
+                            self.lineno,
+                            self.file
+                        )
+
+                        syntaxerror.print_stacktrace()
+
+                elif "".join(self.line[:2]) == "in":
+                    self.tokens["COMMAND"] = "in"
+                    
+                    for char in "in":
+                        self.line.remove(char)
+                    
+                    if self.line[0] == "(" and self.line[-1] == ")":
+                        self.line.pop(0)
+                        self.line.pop()
+
+                        self.tokens["INPUT"] = "".join(self.line)
 
                         return self.tokens
 
@@ -77,6 +105,9 @@ class Lexer:
 
                 syntaxerror.print_stacktrace()
 
+        elif "".join(self.line[:3]) == "set":
+            pass
+        
         else:
             i = 0
             keyword = ""
