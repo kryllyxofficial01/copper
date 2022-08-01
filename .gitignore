@@ -128,3 +128,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Copper Files (This is just so my tests aren't commited. I'll probably remove this later.)
+*.cop
