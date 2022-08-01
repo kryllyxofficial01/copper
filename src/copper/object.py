@@ -7,28 +7,13 @@ class Object:
 		self.lineno = lineno
 		self.file = file
 
-	def isValidString(self) -> bool:
+	def checkType(self) -> str:
 		if self.object[0] == "\"" and self.object[-1] == "\"":
-			return True
+			return "string"
 		else:
-			if (self.object[0] == "\"" and self.object != "\"") or (self.object[0] != "\"" and self.object == "\""):
-				syntaxerror = Error(
-					"SyntaxError",
-					"Unterminated string",
-					self.line,
-					self.lineno,
-					self.file
-				)
-
-				syntaxerror.print_stacktrace()
-
+			try:
+				self.object = int(self.object)
+			except ValueError:
+				print(self.object)
 			else:
-				syntaxerror = Error(
-					"SyntaxError",
-					"Missing quotation marks",
-					self.line,
-					self.lineno,
-					self.file
-				)
-
-				syntaxerror.print_stacktrace()
+				return "int"

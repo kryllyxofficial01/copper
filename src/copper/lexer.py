@@ -11,6 +11,11 @@ class Lexer:
         self.file = file
         self.full_line = "".join(line)
         self.tokens = {}
+        
+        self.letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        self.digits = "1234567890"
+        self.valid_symbols = "_-"
+        self.reserved_symbols = "!#%^&*()+=[]:\"<,>?/"
     
     def lex(self) -> dict:
         if "".join(self.line[:4]) == "exec":
@@ -106,7 +111,64 @@ class Lexer:
                 syntaxerror.print_stacktrace()
 
         elif "".join(self.line[:3]) == "set":
-            pass
+            self.tokens["KEYWORD"] = "set"
+            
+            for char in "set":
+                self.line.remove(char)
+            
+            if self.line[0] == " ":
+                self.line.pop(0)
+                
+                i = 0
+                var = ""
+                while True:
+                    if self.line[i] == "=" or self.line[i] == " ":
+                        break
+                    else:
+                        var += self.line[i]
+                        i += 1
+                
+                self.tokens["VARNAME"] = var
+                
+                for char in var:
+                    self.line.remove(char)
+                
+                self.line = "".join(self.line)
+                self.line = self.line.strip()
+                self.line = list(self.line)
+                
+                if self.line[0] == "=":
+                    self.line.pop(0)
+                    
+                    self.line = "".join(self.line)
+                    self.line = self.line.strip()
+                    self.line = list(self.line)
+                    
+                    self.tokens["CONTENT"] = "".join(self.line)
+                    
+                    return self.tokens
+                
+                else:
+                    syntaxerror = Error(
+                        "SyntaxError",
+                        "Missing equals sign in variable assignment",
+                        self.full_line,
+                        self.lineno,
+                        self.file
+                    )
+                    
+                    syntaxerror.print_stacktrace()
+            
+            else:
+                syntaxerror = Error(
+                    "SyntaxError",
+                    "Missing separation between keyword and variable name",
+                    self.full_line,
+                    self.lineno,
+                    self.file
+                )
+                
+                syntaxerror.print_stacktrace()
         
         else:
             i = 0

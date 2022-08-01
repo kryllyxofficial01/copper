@@ -4,6 +4,8 @@ from copper.interpreter import Interpreter
 print("Enter filepath:")
 filepath = input(">>> ")
 
+vars = {}
+
 try:
 	file = open(filepath, 'r')
 except FileNotFoundError:
@@ -21,5 +23,6 @@ else:
 		lexer = Lexer(line, lineno, filepath)
 		tokens = lexer.lex()
   
-		interpreter = Interpreter(tokens, item, lineno, filepath)
-		interpreter.interpret()
+		interpreter = Interpreter(tokens, vars, item, lineno, filepath)
+		vars = interpreter.interpret()
+		print(vars)
