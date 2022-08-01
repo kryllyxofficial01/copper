@@ -25,4 +25,3 @@ else:
   
 		interpreter = Interpreter(tokens, vars, item, lineno, filepath)
 		vars = interpreter.interpret()
-		print(vars)
