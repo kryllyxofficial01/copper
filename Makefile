@@ -7,7 +7,7 @@ BUILD=build
 
 SRC=$(wildcard src/*.cpp)
 
-FILE=
+file=
 
 all: mkbuild clean compile run
 build: mkbuild clean compile
@@ -16,7 +16,7 @@ compile:
 	$(GXX) $(GXX_FLAGS) $(SRC) -o $(BUILD)/main
 
 run:
-	./$(BUILD)/main $(FILE)
+	./$(BUILD)/main $(file)
 
 mkbuild:
 	mkdir -p $(BUILD)
