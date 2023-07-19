@@ -26,7 +26,7 @@ token_t Lexer::get_next_token() {
             this->skip_whitespace();
         }
 
-        if (isalnum(this->current_char)) {
+        if (__IS_ALNUM(this->current_char)) {
             return this->get_ID();
         }
         else if (this->current_char == '"') {
@@ -57,6 +57,12 @@ token_t Lexer::get_next_token() {
                 token.value = ",";
 
                 break;
+
+            case '=':
+                token.type = EQUALS_SIGN_TOKEN;
+                token.value = "=";
+
+                break;
         }
 
         return this->advance_with_token(token);
@@ -72,7 +78,7 @@ token_t Lexer::get_ID() {
     token_t id_token;
 
     std::string id = "";
-    while (isalnum(this->current_char)) {
+    while (__IS_ALNUM(this->current_char)) {
         id += this->current_char;
         this->next_char();
     }
