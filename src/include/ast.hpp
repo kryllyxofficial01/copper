@@ -19,7 +19,7 @@ typedef struct AST {
     std::string func_call_name;
     std::vector<struct AST> func_call_args;
 
-    std::vector<struct AST> compound_nodes;
+    std::vector<struct AST> nodes;
 } ast_t;
 
 #endif

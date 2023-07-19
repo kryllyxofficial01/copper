@@ -23,7 +23,6 @@ class Parser {
         ast_t parse_function_call();
         ast_t parse_expression();
         ast_t parse_statement();
-        ast_t parse_statements();
 
         std::vector<token_t> tokens;
         size_t index;

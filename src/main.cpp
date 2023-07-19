@@ -4,6 +4,7 @@
 
 #include "include/lexer.hpp"
 #include "include/parser.hpp"
+#include "include/interpreter.hpp"
 #include "include/token.hpp"
 #include "include/ast.hpp"
 
@@ -11,7 +12,7 @@ using namespace std;
 
 int main(int argc, const char* argv[]) {
     if (argc < 2) {
-        cout << "Syntax: make file=<filepath>" << endl;
+        printf("Syntax: make file=<filepath>\n");
         exit(1);
     }
 
@@ -35,6 +36,9 @@ int main(int argc, const char* argv[]) {
 
     Parser parser(tokens);
     ast_t ast = parser.parse();
+
+    Interpreter interpreter(ast);
+    interpreter.interpret();
 
     return 0;
 }

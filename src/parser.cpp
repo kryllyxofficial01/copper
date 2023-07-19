@@ -9,7 +9,16 @@ Parser::Parser(std::vector<token_t> tokens) {
 }
 
 ast_t Parser::parse() {
-    return this->parse_statements();
+    ast_t ast;
+
+    while (this->current_token.type != EOF_TOKEN) {
+        ast.nodes.push_back(
+            this->parse_statement()
+        );
+        this->eat(SEMICOLON_TOKEN);
+    }
+
+    return ast;
 }
 
 token_t Parser::eat(enum TokenType token_type) {
@@ -93,17 +102,4 @@ ast_t Parser::parse_statement() {
     nop_node.node_type = NOP_NODE;
 
     return nop_node;
-}
-
-ast_t Parser::parse_statements() {
-    ast_t compound_ast;
-
-    while (this->current_token.type != EOF_TOKEN) {
-        compound_ast.compound_nodes.push_back(
-            this->parse_statement()
-        );
-        this->eat(SEMICOLON_TOKEN);
-    }
-
-    return compound_ast;
 }
