@@ -57,12 +57,6 @@ token_t Lexer::get_next_token() {
                 token.value = ",";
 
                 break;
-
-            case '=':
-                token.type = EQUALS_SIGN_TOKEN;
-                token.value = "=";
-
-                break;
         }
 
         return this->advance_with_token(token);
