@@ -1,9 +1,9 @@
 #ifndef _LEXER_HPP
 #define _LEXER_HPP
 
-#include <iostream>
 #include <string>
 #include <string.h>
+#include <vector>
 
 #include "token.hpp"
 
@@ -12,12 +12,15 @@
 class Lexer {
     public:
         Lexer(std::string source);
+        Lexer() = default;
 
+        std::vector<token_t> lex();
+
+    private:
         token_t get_next_token();
         token_t get_ID();
         token_t get_string();
 
-    private:
         void next_char();
         token_t advance_with_token(token_t token);
         void skip_whitespace();

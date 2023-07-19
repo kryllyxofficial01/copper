@@ -1,7 +1,7 @@
 .SILENT:
 
 GXX=g++
-GXX_FLAGS=-std=c++17
+GXX_FLAGS=-std=c++17 -Wno-return-type
 
 BUILD=build
 

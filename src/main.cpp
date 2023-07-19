@@ -1,8 +1,11 @@
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 #include "include/lexer.hpp"
+#include "include/parser.hpp"
 #include "include/token.hpp"
+#include "include/ast.hpp"
 
 using namespace std;
 
@@ -28,11 +31,10 @@ int main(int argc, const char* argv[]) {
     }
 
     Lexer lexer(contents);
+    vector<token_t> tokens = lexer.lex();
 
-    token_t token;
-    while ((token = lexer.get_next_token()).type != TOKEN_EOF) {
-        printf("TOKEN(%d, '%s')\n", token.type, token.value.c_str());
-    }
+    Parser parser(tokens);
+    ast_t ast = parser.parse();
 
     return 0;
 }

@@ -4,12 +4,13 @@
 #include <string>
 
 enum TokenType {
-    TOKEN_ID,
-    TOKEN_STRING,
-    TOKEN_LEFT_PAREN,
-    TOKEN_RIGHT_PAREN,
-    TOKEN_SEMICOLON,
-    TOKEN_EOF
+    ID_TOKEN,
+    STRING_TOKEN,
+    LEFT_PAREN_TOKEN,
+    RIGHT_PAREN_TOKEN,
+    SEMICOLON_TOKEN,
+    COMMA_TOKEN,
+    EOF_TOKEN
 };
 
 typedef struct Token {

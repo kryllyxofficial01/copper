@@ -6,17 +6,16 @@ Lexer::Lexer(std::string source) {
     this->current_char = this->source[this->index];
 };
 
-void Lexer::next_char() {
-    if (this->index < this->source.size()) {
-        this->index++;
-        this->current_char = this->source[this->index];
+std::vector<token_t> Lexer::lex() {
+    std::vector<token_t> tokens;
+
+    token_t token;
+    while ((token = this->get_next_token()).type != EOF_TOKEN) {
+        tokens.push_back(token);
     }
-}
+    tokens.push_back(token);
 
-token_t Lexer::advance_with_token(token_t token) {
-    this->next_char();
-
-    return token;
+    return tokens;
 }
 
 token_t Lexer::get_next_token() {
@@ -36,26 +35,34 @@ token_t Lexer::get_next_token() {
 
         switch (this->current_char) {
             case '(':
-                token.type = TOKEN_LEFT_PAREN;
+                token.type = LEFT_PAREN_TOKEN;
                 token.value = "(";
 
-                return this->advance_with_token(token);
+                break;
 
             case ')':
-                token.type = TOKEN_RIGHT_PAREN;
+                token.type = RIGHT_PAREN_TOKEN;
                 token.value = ")";
 
-                return this->advance_with_token(token);
+                break;
 
             case ';':
-                token.type = TOKEN_SEMICOLON;
+                token.type = SEMICOLON_TOKEN;
                 token.value = ";";
 
-                return this->advance_with_token(token);
+                break;
+
+            case ':':
+                token.type = COMMA_TOKEN;
+                token.value = ",";
+
+                break;
         }
+
+        return this->advance_with_token(token);
     }
 
-    token.type = TOKEN_EOF;
+    token.type = EOF_TOKEN;
     token.value = "\0";
 
     return token;
@@ -70,7 +77,7 @@ token_t Lexer::get_ID() {
         this->next_char();
     }
 
-    id_token.type = TOKEN_ID;
+    id_token.type = ID_TOKEN;
     id_token.value = id;
 
     return id_token;
@@ -87,12 +94,25 @@ token_t Lexer::get_string() {
         this->next_char();
     }
 
-    string_token.type = TOKEN_STRING;
+    string_token.type = STRING_TOKEN;
     string_token.value = string;
 
     this->next_char();
 
     return string_token;
+}
+
+void Lexer::next_char() {
+    if (this->index < this->source.size()) {
+        this->index++;
+        this->current_char = this->source[this->index];
+    }
+}
+
+token_t Lexer::advance_with_token(token_t token) {
+    this->next_char();
+
+    return token;
 }
 
 void Lexer::skip_whitespace() {
