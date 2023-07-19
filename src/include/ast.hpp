@@ -14,12 +14,12 @@ enum NodeType {
 typedef struct AST {
     enum NodeType node_type;
 
+    std::vector<struct AST> nodes;
+
     std::string string_value;
 
     std::string func_call_name;
     std::vector<struct AST> func_call_args;
-
-    std::vector<struct AST> nodes;
 } ast_t;
 
 #endif
