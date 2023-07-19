@@ -13,7 +13,6 @@ enum NodeType {
 
 typedef struct AST {
     enum NodeType node_type;
-
     std::vector<struct AST> nodes;
 
     std::string string_value;
