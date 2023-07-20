@@ -7,12 +7,12 @@ Interpreter::Interpreter(ast_t ast) {
 void Interpreter::interpret() {
     for (ast_t node: this->ast.nodes) {
         switch (node.node_type) {
-            case FUNCTION_CALL_NODE:
-                this->interpret_function_call(node);
-                break;
-
             case VARIABLE_DEFINITION_NODE:
                 this->interpret_variable_definition(node);
+                break;
+
+            case FUNCTION_CALL_NODE:
+                this->interpret_function_call(node);
                 break;
         }
     }
@@ -37,6 +37,6 @@ void Interpreter::interpret_function_call(ast_t func_call_node) {
         BUILTIN_FUNC_TYPE builtin = builtin_functions.find(
             func_call_node.func_call_name
         )->second;
-        builtin(func_call_node.func_call_args);
+        builtin(func_call_node.func_call_args, this->variables);
     }
 }

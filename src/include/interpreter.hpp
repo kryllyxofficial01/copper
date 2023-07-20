@@ -9,8 +9,7 @@
 
 #include "ast.hpp"
 #include "builtins.hpp"
-
-#define __GET_VAR(v, x) std::any_cast<ast_t>(v.find(x)->second.second)
+#include "utils.hpp"
 
 const static std::unordered_map<std::string, BUILTIN_FUNC_TYPE> builtin_functions = {
     {"println", &println}
@@ -29,7 +28,7 @@ class Interpreter {
 
         ast_t ast;
 
-        std::map<std::string, std::pair<std::string, std::any>> variables;
+        VARS_TYPE variables;
 };
 
 #endif

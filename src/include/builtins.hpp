@@ -2,13 +2,12 @@
 #define _BUILTINS_HPP
 
 #include <vector>
-#include <functional>
 #include <stdio.h>
+#include <map>
 
 #include "ast.hpp"
+#include "utils.hpp"
 
-#define BUILTIN_FUNC_TYPE std::function<void(std::vector<ast_t>)>
-
-void println(std::vector<ast_t> args);
+void println(std::vector<ast_t> args, VARS_TYPE variables);
 
 #endif

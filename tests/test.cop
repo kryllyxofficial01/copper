@@ -1,1 +1,3 @@
 string test_var = "test";
+
+println(test_var);

@@ -54,6 +54,8 @@ ast_t Parser::parse_ID() {
     ) != builtin_data_types.end()) {
         return this->parse_variable_definition();
     }
+
+    return this->parse_variable_usage();
 }
 
 ast_t Parser::parse_string() {
@@ -84,6 +86,17 @@ ast_t Parser::parse_variable_definition() {
     );
 
     return var_def_ast;
+}
+
+ast_t Parser::parse_variable_usage() {
+    ast_t var_use_ast;
+
+    var_use_ast.node_type = VARIABLE_USAGE_NODE;
+    var_use_ast.var_use_name = this->current_token.value;
+
+    this->eat(ID_TOKEN);
+
+    return var_use_ast;
 }
 
 ast_t Parser::parse_function_call() {
