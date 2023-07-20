@@ -3,12 +3,16 @@
 
 #include <vector>
 #include <string>
+#include <map>
 #include <unordered_map>
+#include <any>
 
 #include "ast.hpp"
 #include "builtins.hpp"
 
-const static std::unordered_map<std::string, BUILTIN_TYPE> builtins = {
+#define __GET_VAR(v, x) std::any_cast<ast_t>(v.find(x)->second.second)
+
+const static std::unordered_map<std::string, BUILTIN_FUNC_TYPE> builtin_functions = {
     {"println", &println}
 };
 
@@ -20,9 +24,12 @@ class Interpreter {
         void interpret();
 
     private:
+        void interpret_variable_definition(ast_t var_def_node);
         void interpret_function_call(ast_t func_call_node);
 
         ast_t ast;
+
+        std::map<std::string, std::pair<std::string, std::any>> variables;
 };
 
 #endif

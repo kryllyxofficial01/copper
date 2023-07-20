@@ -34,3 +34,6 @@ build
 
 # VSCode
 .vscode
+
+# Valgrind Debug Info
+vgcore*

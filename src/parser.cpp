@@ -48,6 +48,12 @@ ast_t Parser::parse_ID() {
     if (this->peek(1).type == LEFT_PAREN_TOKEN) {
         return this->parse_function_call();
     }
+    else if (__VECTOR_FIND(
+        builtin_data_types,
+        this->current_token.value
+    ) != builtin_data_types.end()) {
+        return this->parse_variable_definition();
+    }
 }
 
 ast_t Parser::parse_string() {
@@ -59,6 +65,25 @@ ast_t Parser::parse_string() {
     this->eat(STRING_TOKEN);
 
     return string_ast;
+}
+
+ast_t Parser::parse_variable_definition() {
+    ast_t var_def_ast;
+    var_def_ast.node_type = VARIABLE_DEFINITION_NODE;
+
+    var_def_ast.var_def_data_type = this->current_token.value;
+    this->eat(ID_TOKEN);
+
+    var_def_ast.var_def_name = this->current_token.value;
+    this->eat(ID_TOKEN);
+
+    this->eat(EQUALS_SIGN_TOKEN);
+
+    var_def_ast.var_def_value = std::any_cast<struct AST>(
+        this->parse_expression()
+    );
+
+    return var_def_ast;
 }
 
 ast_t Parser::parse_function_call() {

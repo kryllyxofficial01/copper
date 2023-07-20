@@ -7,7 +7,7 @@
 
 #include "ast.hpp"
 
-#define BUILTIN_TYPE std::function<void(std::vector<ast_t>)>
+#define BUILTIN_FUNC_TYPE std::function<void(std::vector<ast_t>)>
 
 void println(std::vector<ast_t> args);
 

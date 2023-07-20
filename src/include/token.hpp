@@ -10,6 +10,7 @@ enum TokenType {
     RIGHT_PAREN_TOKEN,
     SEMICOLON_TOKEN,
     COMMA_TOKEN,
+    EQUALS_SIGN_TOKEN,
     EOF_TOKEN
 };
 
