@@ -17,7 +17,8 @@ void println(std::vector<ast_t> args, VARS_TYPE variables) {
                 );
 
                 if (variables.find(
-                    arg.var_use_name)->second.first == "string"
+                    arg.var_use_name
+                )->second.first == "string"
                 ) {
                     printf(
                         "%s\n",
