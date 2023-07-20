@@ -9,16 +9,7 @@ Parser::Parser(std::vector<token_t> tokens) {
 }
 
 ast_t Parser::parse() {
-    ast_t ast;
-
-    while (this->current_token.type != EOF_TOKEN) {
-        ast.nodes.push_back(
-            this->parse_statement()
-        );
-        this->eat(SEMICOLON_TOKEN);
-    }
-
-    return ast;
+    return this->parse_statements();
 }
 
 token_t Parser::eat(enum TokenType token_type) {
@@ -54,6 +45,9 @@ ast_t Parser::parse_ID() {
     ) != builtin_data_types.end()) {
         return this->parse_variable_definition();
     }
+    else if (this->current_token.value == "func") {
+        return this->parse_function_definition();
+    }
 
     return this->parse_variable_usage();
 }
@@ -67,6 +61,19 @@ ast_t Parser::parse_string() {
     this->eat(STRING_TOKEN);
 
     return string_ast;
+}
+
+ast_t Parser::parse_arg() {
+    ast_t arg_ast;
+    arg_ast.node_type = ARG_NODE;
+
+    arg_ast.arg_data_type = this->current_token.value;
+    this->eat(ID_TOKEN);
+
+    arg_ast.arg_name = this->current_token.value;
+    this->eat(ID_TOKEN);
+
+    return arg_ast;
 }
 
 ast_t Parser::parse_variable_definition() {
@@ -90,25 +97,66 @@ ast_t Parser::parse_variable_definition() {
 
 ast_t Parser::parse_variable_usage() {
     ast_t var_use_ast;
-
     var_use_ast.node_type = VARIABLE_USAGE_NODE;
-    var_use_ast.var_use_name = this->current_token.value;
 
+    var_use_ast.var_use_name = this->current_token.value;
     this->eat(ID_TOKEN);
 
     return var_use_ast;
 }
 
-ast_t Parser::parse_function_call() {
-    ast_t func_call_ast;
-
-    func_call_ast.node_type = FUNCTION_CALL_NODE;
-    func_call_ast.func_call_name = this->current_token.value;
+ast_t Parser::parse_function_definition() {
+    ast_t func_def_ast;
+    func_def_ast.node_type = FUNCTION_DEFINITION_NODE;
 
     this->eat(ID_TOKEN);
+
+    func_def_ast.func_def_name = this->current_token.value;
+    this->eat(ID_TOKEN);
+
     this->eat(LEFT_PAREN_TOKEN);
 
-    while (this->current_token.type != RIGHT_PAREN_TOKEN) {
+    func_def_ast.func_def_args.push_back(
+        this->parse_arg()
+    );
+
+    while (this->current_token.type == COMMA_TOKEN) {
+        this->eat(COMMA_TOKEN);
+
+        func_def_ast.func_def_args.push_back(
+            this->parse_arg()
+        );
+    }
+
+    this->eat(RIGHT_PAREN_TOKEN);
+    this->eat(RIGHT_HYPHEN_ARROW_TOKEN);
+
+    func_def_ast.func_def_return_type = this->current_token.value;
+    this->eat(ID_TOKEN);
+
+    this->eat(LEFT_BRACE_TOKEN);
+    func_def_ast.func_def_body = this->parse_statements();
+    this->eat(RIGHT_BRACE_TOKEN);
+
+    return func_def_ast;
+}
+
+ast_t Parser::parse_function_call() {
+    ast_t func_call_ast;
+    func_call_ast.node_type = FUNCTION_CALL_NODE;
+
+    func_call_ast.func_call_name = this->current_token.value;
+    this->eat(ID_TOKEN);
+
+    this->eat(LEFT_PAREN_TOKEN);
+
+    func_call_ast.func_call_args.push_back(
+        this->parse_expression()
+    );
+
+    while (this->current_token.type == COMMA_TOKEN) {
+        this->eat(COMMA_TOKEN);
+
         func_call_ast.func_call_args.push_back(
             this->parse_expression()
         );
@@ -140,4 +188,22 @@ ast_t Parser::parse_statement() {
     nop_node.node_type = NOP_NODE;
 
     return nop_node;
+}
+
+ast_t Parser::parse_statements() {
+    ast_t ast;
+
+    ast.nodes.push_back(
+        this->parse_statement()
+    );
+
+    while (this->current_token.type == SEMICOLON_TOKEN) {
+        this->eat(SEMICOLON_TOKEN);
+
+        ast.nodes.push_back(
+            this->parse_statement()
+        );
+    }
+
+    return ast;
 }

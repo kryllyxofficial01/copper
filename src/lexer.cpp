@@ -46,6 +46,20 @@ token_t Lexer::get_next_token() {
 
                 break;
 
+            case '{':
+                token.type = LEFT_BRACE_TOKEN;
+                token.value = "{";
+
+                break;
+
+            case '}':
+                token.type = RIGHT_BRACE_TOKEN;
+                token.value = "}";
+
+                this->source.insert(this->index+1, ";");
+
+                break;
+
             case ';':
                 token.type = SEMICOLON_TOKEN;
                 token.value = ";";
@@ -61,6 +75,16 @@ token_t Lexer::get_next_token() {
             case '=':
                 token.type = EQUALS_SIGN_TOKEN;
                 token.value = "=";
+
+                break;
+
+            case '-':
+                if (this->peek(1) == '>') {
+                    token.type = RIGHT_HYPHEN_ARROW_TOKEN;
+                    token.value = "->";
+
+                    this->next_char();
+                }
 
                 break;
         }
@@ -113,6 +137,12 @@ void Lexer::next_char() {
         this->index++;
         this->current_char = this->source[this->index];
     }
+}
+
+char Lexer::peek(size_t offset) {
+    return this->source[
+        this->index + offset
+    ];
 }
 
 token_t Lexer::advance_with_token(token_t token) {

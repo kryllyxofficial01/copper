@@ -23,12 +23,16 @@ class Interpreter {
         void interpret();
 
     private:
+        void interpret(ast_t ast);
+
         void interpret_variable_definition(ast_t var_def_node);
+        void interpret_function_definition(ast_t func_def_node);
         void interpret_function_call(ast_t func_call_node);
 
         ast_t ast;
 
         VARS_TYPE variables;
+        FUNCS_TYPE functions;
 };
 
 #endif

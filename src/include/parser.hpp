@@ -24,10 +24,13 @@ class Parser {
 
         ast_t parse_ID();
         ast_t parse_string();
+        ast_t parse_arg();
         ast_t parse_variable_definition();
         ast_t parse_variable_usage();
+        ast_t parse_function_definition();
         ast_t parse_function_call();
         ast_t parse_expression();
+        ast_t parse_statements();
         ast_t parse_statement();
 
         std::vector<token_t> tokens;

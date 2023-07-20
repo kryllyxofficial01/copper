@@ -23,6 +23,7 @@ class Lexer {
         token_t get_string();
 
         void next_char();
+        char peek(size_t offset);
         token_t advance_with_token(token_t token);
         void skip_whitespace();
 
