@@ -39,10 +39,12 @@ ast_t Parser::parse_ID() {
     if (this->peek(1).type == LEFT_PAREN_TOKEN) {
         return this->parse_function_call();
     }
-    else if (__VECTOR_FIND(
-        builtin_data_types,
-        this->current_token.value
-    ) != builtin_data_types.end()) {
+    else if (
+        __VECTOR_FIND(
+            builtin_data_types,
+            this->current_token.value
+        ) != builtin_data_types.end()
+    ) {
         return this->parse_variable_definition();
     }
     else if (this->current_token.value == "func") {

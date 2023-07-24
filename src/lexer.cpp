@@ -9,9 +9,11 @@ Lexer::Lexer(std::string source) {
 std::vector<token_t> Lexer::lex() {
     std::vector<token_t> tokens;
 
-    token_t token;
-    while ((token = this->get_next_token()).type != EOF_TOKEN) {
+    token_t token = this->get_next_token();
+    while (token.type != EOF_TOKEN) {
         tokens.push_back(token);
+
+        token = this->get_next_token();
     }
     tokens.push_back(token);
 
@@ -56,7 +58,7 @@ token_t Lexer::get_next_token() {
                 token.type = RIGHT_BRACE_TOKEN;
                 token.value = "}";
 
-                this->source.insert(this->index+1, ";");
+                this->source.insert(this->index+1, ";"); // i hate this
 
                 break;
 

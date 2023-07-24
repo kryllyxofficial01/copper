@@ -70,6 +70,9 @@ void Interpreter::interpret_function_call(ast_t func_call_node) {
         BUILTIN_FUNC_TYPE builtin = builtin_functions.find(
             func_call_node.func_call_name
         )->second;
-        builtin(func_call_node.func_call_args, this->variables);
+        builtin(
+            func_call_node.func_call_args,
+            this->variables
+        );
     }
 }
