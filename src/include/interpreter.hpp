@@ -11,10 +11,6 @@
 #include "builtins.hpp"
 #include "utils.hpp"
 
-const static std::unordered_map<std::string, BUILTIN_FUNC_TYPE> builtin_functions = {
-    {"println", &println}
-};
-
 class Interpreter {
     public:
         Interpreter(ast_t ast);
