@@ -1,13 +1,15 @@
 GXX=g++
 
-GXX_FLAGS=-g -std=c++17
+GXX_FLAGS=-g -std=c++17 -Wno-return-type
 
 BUILD=build
+
+SRC=$(wildcard src/*.cpp)
 
 all: compile
 
 compile: mkbuild clean
-	$(GXX) $(GXX_FLAGS) src/main.cpp -o $(BUILD)/main
+	$(GXX) $(GXX_FLAGS) $(SRC) -o $(BUILD)/main
 
 mkbuild:
 	mkdir -p $(BUILD)
