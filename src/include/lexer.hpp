@@ -3,8 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <stdio.h>
-#include <ctype.h>
 
 #include "token.hpp"
 #include "utils.hpp"
