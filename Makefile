@@ -1,22 +1,13 @@
-.SILENT:
-
 GXX=g++
-GXX_FLAGS=-g -std=c++17 -Wno-return-type
+
+GXX_FLAGS=-g -std=c++17
 
 BUILD=build
 
-SRC=$(wildcard src/*.cpp)
+all: compile
 
-file=
-
-all: mkbuild clean compile run
-build: mkbuild clean compile
-
-compile:
-	$(GXX) $(GXX_FLAGS) $(SRC) -o $(BUILD)/main
-
-run:
-	./$(BUILD)/main $(file)
+compile: mkbuild clean
+	$(GXX) $(GXX_FLAGS) src/main.cpp -o $(BUILD)/main
 
 mkbuild:
 	mkdir -p $(BUILD)
