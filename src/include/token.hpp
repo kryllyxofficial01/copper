@@ -9,12 +9,13 @@ enum TokenType {
     TT_LEFT_PAREN,
     TT_RIGHT_PAREN,
     TT_SEMICOLON,
+    TT_COMMA,
     TT_EOF
 };
 
-struct Token {
+typedef struct Token {
     enum TokenType type;
     std::string value;
-};
+} token_t;
 
 #endif

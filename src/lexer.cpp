@@ -8,18 +8,19 @@ Lexer::Lexer(std::string source) {
     this->next_char();
 }
 
-std::vector<struct Token> Lexer::lex() {
-    std::vector<struct Token> tokens;
+std::vector<token_t> Lexer::lex() {
+    std::vector<token_t> tokens;
 
-    struct Token token;
+    token_t token;
     while ((token = this->get_next_token()).type != TT_EOF) {
         tokens.push_back(token);
     }
+    tokens.push_back(token);
 
     return tokens;
 }
 
-struct Token Lexer::get_next_token() {
+token_t Lexer::get_next_token() {
     while (this->index < this->source.size()) {
         if (__IS_ALNUM(this->current_char)) {
             return this->get_ID();
@@ -32,26 +33,26 @@ struct Token Lexer::get_next_token() {
         return this->get_char();
     }
 
-    return (struct Token) {
+    return (token_t) {
         .type = TT_EOF,
         .value = "\0"
     };
 }
 
-struct Token Lexer::get_ID() {
+token_t Lexer::get_ID() {
     std::string value;
     while (__IS_ALNUM(this->current_char)) {
         value += this->current_char;
         this->next_char();
     }
 
-    return (struct Token) {
+    return (token_t) {
         .type = TT_ID,
         .value = value
     };
 }
 
-struct Token Lexer::get_string() {
+token_t Lexer::get_string() {
     this->next_char();
 
     std::string string;
@@ -62,32 +63,39 @@ struct Token Lexer::get_string() {
 
     this->next_char();
 
-    return (struct Token) {
+    return (token_t) {
         .type = TT_STRING,
         .value = string
     };
 }
 
-struct Token Lexer::get_char() {
+token_t Lexer::get_char() {
     switch (this->current_char) {
         case '(': return this->advance_with_token(
-            (struct Token) {
+            (token_t) {
                 .type = TT_LEFT_PAREN,
                 .value = "("
             }
         );
 
         case ')': return this->advance_with_token(
-            (struct Token) {
+            (token_t) {
                 .type = TT_RIGHT_PAREN,
                 .value = ")"
             }
         );
 
         case ';': return this->advance_with_token(
-            (struct Token) {
+            (token_t) {
                 .type = TT_SEMICOLON,
                 .value = ";"
+            }
+        );
+
+        case ',': return this->advance_with_token(
+            (token_t) {
+                .type = TT_COMMA,
+                .value = ","
             }
         );
 
@@ -100,7 +108,7 @@ struct Token Lexer::get_char() {
     }
 }
 
-struct Token Lexer::advance_with_token(struct Token token) {
+token_t Lexer::advance_with_token(token_t token) {
     this->next_char();
 
     return token;

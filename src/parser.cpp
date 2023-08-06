@@ -1,0 +1,114 @@
+#include "include/parser.hpp"
+
+Parser::Parser(std::vector<token_t> tokens) {
+    this->tokens = tokens;
+
+    this->current_token = this->tokens.at(
+        (this->index = 0)
+    );
+}
+
+ast_t Parser::parse() {
+    return this->parse_statements();
+}
+
+ast_t Parser::parse_statements() {
+    ast_t compound_ast;
+
+    compound_ast.type = COMPOUND_NODE;
+
+    compound_ast.nodes.push_back(this->parse_statement());
+    while (this->current_token.type == TT_SEMICOLON) {
+        this->eat(TT_SEMICOLON);
+
+        compound_ast.nodes.push_back(this->parse_statement());
+    }
+
+    return compound_ast;
+}
+
+ast_t Parser::parse_statement() {
+    switch (this->current_token.type) {
+        case TT_ID: return this->parse_ID();
+    }
+
+    return (ast_t) {
+        .type = NOP_NODE
+    };
+}
+
+ast_t Parser::parse_expression() {
+    switch (this->current_token.type) {
+        case TT_ID: return this->parse_ID();
+        case TT_STRING: return this->parse_string();
+    }
+
+    return (ast_t) {
+        .type = NOP_NODE
+    };
+}
+
+ast_t Parser::parse_ID() {
+    if (this->peek(1).type == TT_LEFT_PAREN) {
+        return this->parse_function_call();
+    }
+}
+
+ast_t Parser::parse_string() {
+    ast_t string_ast;
+
+    string_ast.type = STRING_NODE;
+    string_ast.string_value = this->current_token.value;
+
+    this->eat(TT_STRING);
+
+    return string_ast;
+}
+
+ast_t Parser::parse_function_call() {
+    ast_t func_call_ast;
+
+    func_call_ast.type = FUNCTION_CALL_NODE;
+
+    func_call_ast.func_call_name = this->current_token.value;
+    this->eat(TT_ID);
+
+    this->eat(TT_LEFT_PAREN);
+
+    if (this->current_token.type != TT_RIGHT_PAREN) {
+        func_call_ast.func_call_args.push_back(
+            this->parse_expression()
+        );
+
+        while (this->current_token.type == TT_COMMA) {
+            this->eat(TT_COMMA);
+
+            func_call_ast.func_call_args.push_back(
+                this->parse_expression()
+            );
+        }
+    }
+
+    this->eat(TT_RIGHT_PAREN);
+
+    return func_call_ast;
+}
+
+void Parser::eat(enum TokenType token_type) {
+    if (this->current_token.type != token_type) {
+        printf(
+            "Unexpected token: '%s'\n",
+            this->current_token.value.c_str()
+        );
+    }
+
+    this->current_token = this->tokens.at(
+        ++this->index
+    );
+}
+
+token_t Parser::peek(size_t offset) {
+    return this->tokens.at(
+        this->index + offset
+    );
+}

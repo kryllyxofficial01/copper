@@ -12,15 +12,15 @@ class Lexer {
         Lexer(std::string source);
         Lexer() = default;
 
-        std::vector<struct Token> lex();
+        std::vector<token_t> lex();
 
     private:
-        struct Token get_next_token();
-        struct Token get_ID();
-        struct Token get_string();
-        struct Token get_char();
+        token_t get_next_token();
+        token_t get_ID();
+        token_t get_string();
+        token_t get_char();
 
-        struct Token advance_with_token(struct Token token);
+        token_t advance_with_token(token_t token);
         void next_char();
 
         std::string source;

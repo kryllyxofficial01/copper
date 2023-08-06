@@ -3,7 +3,9 @@
 #include <vector>
 
 #include "include/lexer.hpp"
+#include "include/parser.hpp"
 #include "include/token.hpp"
+#include "include/ast.hpp"
 
 using namespace std;
 
@@ -24,5 +26,8 @@ int main(int argc, const char* argv[]) {
     }
 
     Lexer lexer(contents);
-    vector<struct Token> tokens = lexer.lex();
+    vector<token_t> tokens = lexer.lex();
+
+    Parser parser(tokens);
+    ast_t AST = parser.parse();
 }
