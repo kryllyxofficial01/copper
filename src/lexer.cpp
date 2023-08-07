@@ -22,6 +22,10 @@ std::vector<token_t> Lexer::lex() {
 
 token_t Lexer::get_next_token() {
     while (this->index < this->source.size()) {
+        if (__IS_WHITESPACE(this->current_char)) {
+            this->skip_whitespace();
+        }
+
         if (__IS_ALNUM(this->current_char)) {
             return this->get_ID();
         }
@@ -92,6 +96,20 @@ token_t Lexer::get_char() {
             }
         );
 
+        case ':': return this->advance_with_token(
+            (token_t) {
+                .type = TT_COLON,
+                .value = ":"
+            }
+        );
+
+        case '=': return this->advance_with_token(
+            (token_t) {
+                .type = TT_EQUALS_SIGN,
+                .value = "="
+            }
+        );
+
         case ',': return this->advance_with_token(
             (token_t) {
                 .type = TT_COMMA,
@@ -118,4 +136,10 @@ void Lexer::next_char() {
     this->current_char = this->source[
         ++this->index
     ];
+}
+
+void Lexer::skip_whitespace() {
+    while (__IS_WHITESPACE(this->current_char)) {
+        this->next_char();
+    }
 }

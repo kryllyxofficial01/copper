@@ -20,6 +20,8 @@ class Parser {
 
         ast_t parse_ID();
         ast_t parse_string();
+        ast_t parse_variable_definition();
+        ast_t parse_variable_usage();
         ast_t parse_function_call();
 
         void eat(enum TokenType token_type);

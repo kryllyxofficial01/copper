@@ -1,1 +1,3 @@
-println("test");
+var test_var: string = "kryllyx";
+
+println(test_var);
