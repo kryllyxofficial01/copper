@@ -30,8 +30,4 @@ int main(int argc, const char* argv[]) {
 
     Parser parser(tokens);
     ast_t AST = parser.parse();
-
-    for (ast_t node: AST.nodes) {
-        printf("%i\n", node.type);
-    }
 }
