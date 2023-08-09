@@ -75,47 +75,64 @@ token_t Lexer::get_string() {
 
 token_t Lexer::get_char() {
     switch (this->current_char) {
-        case '(': return this->advance_with_token(
-            (token_t) {
-                .type = TT_LEFT_PAREN,
-                .value = "("
-            }
-        );
+        case '(':
+            return this->advance_with_token(
+                (token_t) {
+                    .type = TT_LEFT_PAREN,
+                    .value = "("
+                }
+            );
 
-        case ')': return this->advance_with_token(
-            (token_t) {
-                .type = TT_RIGHT_PAREN,
-                .value = ")"
-            }
-        );
+        case ')':
+            return this->advance_with_token(
+                (token_t) {
+                    .type = TT_RIGHT_PAREN,
+                    .value = ")"
+                }
+            );
 
-        case ';': return this->advance_with_token(
-            (token_t) {
-                .type = TT_SEMICOLON,
-                .value = ";"
-            }
-        );
+        case ';':
+            return this->advance_with_token(
+                (token_t) {
+                    .type = TT_SEMICOLON,
+                    .value = ";"
+                }
+            );
 
-        case ':': return this->advance_with_token(
-            (token_t) {
-                .type = TT_COLON,
-                .value = ":"
-            }
-        );
+        case ':':
+            if (this->peek(1) == '=') {
+                this->next_char();
 
-        case '=': return this->advance_with_token(
-            (token_t) {
-                .type = TT_EQUALS_SIGN,
-                .value = "="
+                return this->advance_with_token(
+                    (token_t) {
+                        .type = TT_ASSIGNMENT_OPERATOR,
+                        .value = ":="
+                    }
+                );
             }
-        );
 
-        case ',': return this->advance_with_token(
-            (token_t) {
-                .type = TT_COMMA,
-                .value = ","
-            }
-        );
+            return this->advance_with_token(
+                (token_t) {
+                    .type = TT_COLON,
+                    .value = ":"
+                }
+            );
+
+        case '=':
+            return this->advance_with_token(
+                (token_t) {
+                    .type = TT_EQUALS_SIGN,
+                    .value = "="
+                }
+            );
+
+        case ',':
+            return this->advance_with_token(
+                (token_t) {
+                    .type = TT_COMMA,
+                    .value = ","
+                }
+            );
 
         default:
             printf(
@@ -135,6 +152,12 @@ token_t Lexer::advance_with_token(token_t token) {
 void Lexer::next_char() {
     this->current_char = this->source[
         ++this->index
+    ];
+}
+
+char Lexer::peek(size_t offset) {
+    return this->source[
+        this->index + offset
     ];
 }
 

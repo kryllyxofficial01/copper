@@ -52,6 +52,9 @@ ast_t Parser::parse_ID() {
     if (this->current_token.value == "var") {
         return this->parse_variable_definition();
     }
+    else if (this->peek(1).type == TT_ASSIGNMENT_OPERATOR) {
+        return this->parse_variable_redefinition();
+    }
     else if (this->peek(1).type == TT_LEFT_PAREN) {
         return this->parse_function_call();
     }
@@ -90,6 +93,21 @@ ast_t Parser::parse_variable_definition() {
     var_def_ast.var_def_value = this->parse_expression();
 
     return var_def_ast;
+}
+
+ast_t Parser::parse_variable_redefinition() {
+    ast_t var_redef_ast;
+
+    var_redef_ast.type = VARIABLE_REDEFINITION_NODE;
+
+    var_redef_ast.var_redef_name = this->current_token.value;
+    this->eat(TT_ID);
+
+    this->eat(TT_ASSIGNMENT_OPERATOR);
+
+    var_redef_ast.var_redef_value = this->parse_expression();
+
+    return var_redef_ast;
 }
 
 ast_t Parser::parse_variable_usage() {

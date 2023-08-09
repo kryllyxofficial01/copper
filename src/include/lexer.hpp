@@ -22,6 +22,7 @@ class Lexer {
 
         token_t advance_with_token(token_t token);
         void next_char();
+        char peek(size_t offset);
         void skip_whitespace();
 
         std::string source;

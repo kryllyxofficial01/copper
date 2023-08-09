@@ -8,6 +8,7 @@
 enum NodeType {
     STRING_NODE,
     VARIABLE_DEFINITION_NODE,
+    VARIABLE_REDEFINITION_NODE,
     VARIABLE_USAGE_NODE,
     FUNCTION_CALL_NODE,
     COMPOUND_NODE,
@@ -22,6 +23,9 @@ typedef struct AST {
     std::string var_def_name;
     std::string var_def_type;
     std::any var_def_value;
+
+    std::string var_redef_name;
+    std::any var_redef_value;
 
     std::string var_use_name;
 

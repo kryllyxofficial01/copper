@@ -1,3 +1,5 @@
 var test_var: string = "kryllyx";
 
+test_var := "kryllyxofficial";
+
 println(test_var);

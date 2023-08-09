@@ -10,8 +10,9 @@ enum TokenType {
     TT_RIGHT_PAREN,
     TT_SEMICOLON,
     TT_COLON,
-    TT_EQUALS_SIGN,
     TT_COMMA,
+    TT_EQUALS_SIGN,
+    TT_ASSIGNMENT_OPERATOR,
     TT_EOF
 };
 
