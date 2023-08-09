@@ -23,6 +23,7 @@ int main(int argc, const char* argv[]) {
     string line;
     while (getline(reader, line)) {
         contents += line;
+        std::cout << "fard\n";
     }
 
     Lexer lexer(contents);
