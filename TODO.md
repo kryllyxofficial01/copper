@@ -1,0 +1,10 @@
+- [x] Variable Definitions
+- [x] Variable Redefinitions
+- [x] Function Calls
+- [x] Function Definitions
+- [ ] Control Flow
+    - [ ] if-elif-else
+    - [ ] while
+    - [ ] for
+- [ ] Operators (Math and Boolean)
+    - [ ] Implement order of operations
