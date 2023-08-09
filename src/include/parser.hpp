@@ -17,7 +17,7 @@ class Parser {
         ast_t parse_statements();
         ast_t parse_statement();
         ast_t parse_expression();
-        ast_t parse_block();
+        std::vector<ast_t> parse_block();
 
         ast_t parse_ID();
         ast_t parse_string();

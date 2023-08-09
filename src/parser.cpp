@@ -48,6 +48,22 @@ ast_t Parser::parse_expression() {
     };
 }
 
+std::vector<ast_t> Parser::parse_block() {
+    std::vector<ast_t> block;
+
+    this->eat(TT_LEFT_BRACE);
+
+    while (this->current_token.type != TT_RIGHT_BRACE) {
+        block.push_back(this->parse_statement());
+
+        this->eat(TT_SEMICOLON);
+    }
+
+    this->eat(TT_RIGHT_BRACE);
+
+    return block;
+}
+
 ast_t Parser::parse_ID() {
     if (this->current_token.value == "var") {
         return this->parse_variable_definition();
