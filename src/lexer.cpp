@@ -100,6 +100,8 @@ token_t Lexer::get_char() {
             );
 
         case '}':
+            this->source[this->index+1] = ';'; // i hate this
+
             return this->advance_with_token(
                 (token_t) {
                     .type = TT_RIGHT_BRACE,

@@ -1,3 +1,5 @@
 func print_name(name: string) -> void {
     println(name);
 }
+
+print_name("kryllyx");
