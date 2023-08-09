@@ -55,6 +55,9 @@ ast_t Parser::parse_ID() {
     else if (this->peek(1).type == TT_ASSIGNMENT_OPERATOR) {
         return this->parse_variable_redefinition();
     }
+    else if (this->current_token.value == "func") {
+        return this->parse_function_definition();
+    }
     else if (this->peek(1).type == TT_LEFT_PAREN) {
         return this->parse_function_call();
     }
@@ -119,6 +122,56 @@ ast_t Parser::parse_variable_usage() {
     this->eat(TT_ID);
 
     return var_usage_ast;
+}
+
+ast_t Parser::parse_function_definition() {
+    ast_t func_def_ast;
+
+    func_def_ast.type = FUNCTION_DEFINITION_NODE;
+    this->eat(TT_ID);
+
+    func_def_ast.func_def_name = this->current_token.value;
+    this->eat(TT_ID);
+
+    this->eat(TT_LEFT_PAREN);
+
+    if (this->current_token.type != TT_RIGHT_PAREN) {
+        ARG_NODE_TYPE arg;
+
+        arg.first = this->current_token.value;
+        this->eat(TT_ID);
+
+        this->eat(TT_COLON);
+
+        arg.second = this->current_token.value;
+        this->eat(TT_ID);
+
+        func_def_ast.func_def_args.push_back(arg);
+
+        while (this->current_token.type == TT_COMMA) {
+            this->eat(TT_COMMA);
+
+            arg.first = this->current_token.value;
+            this->eat(TT_ID);
+
+            this->eat(TT_COLON);
+
+            arg.second = this->current_token.value;
+            this->eat(TT_ID);
+
+            func_def_ast.func_def_args.push_back(arg);
+        }
+    }
+
+    this->eat(TT_RIGHT_PAREN);
+    this->eat(TT_RIGHT_HYPHEN_ARROW);
+
+    func_def_ast.func_def_return_type = this->current_token.value;
+    this->eat(TT_ID);
+
+    func_def_ast.func_def_body = this->parse_block();
+
+    return func_def_ast;
 }
 
 ast_t Parser::parse_function_call() {

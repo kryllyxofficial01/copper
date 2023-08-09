@@ -1,5 +1,3 @@
-var test_var: string = "kryllyx";
-
-test_var := "kryllyxofficial";
-
-println(test_var);
+func print_name(name: string) -> void {
+    println(name);
+}

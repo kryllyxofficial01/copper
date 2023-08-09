@@ -91,6 +91,24 @@ token_t Lexer::get_char() {
                 }
             );
 
+        case '{':
+            return this->advance_with_token(
+                (token_t) {
+                    .type = TT_LEFT_BRACE,
+                    .value = "{"
+                }
+            );
+
+        case '}':
+            this->source[this->index+1] = ';';
+
+            return this->advance_with_token(
+                (token_t) {
+                    .type = TT_RIGHT_BRACE,
+                    .value = "}"
+                }
+            );
+
         case ';':
             return this->advance_with_token(
                 (token_t) {
@@ -118,6 +136,14 @@ token_t Lexer::get_char() {
                 }
             );
 
+        case ',':
+            return this->advance_with_token(
+                (token_t) {
+                    .type = TT_COMMA,
+                    .value = ","
+                }
+            );
+
         case '=':
             return this->advance_with_token(
                 (token_t) {
@@ -126,13 +152,17 @@ token_t Lexer::get_char() {
                 }
             );
 
-        case ',':
-            return this->advance_with_token(
-                (token_t) {
-                    .type = TT_COMMA,
-                    .value = ","
-                }
-            );
+        case '-':
+            if (this->peek(1) == '>') {
+                this->next_char();
+
+                return this->advance_with_token(
+                    (token_t) {
+                        .type = TT_RIGHT_HYPHEN_ARROW,
+                        .value = "->"
+                    }
+                );
+            }
 
         default:
             printf(
