@@ -2,6 +2,11 @@
 - [x] Variable Redefinitions
 - [x] Function Calls
 - [x] Function Definitions
+- [ ] Different Data Types
+    - [x] String (string)
+    - [x] Integer (int)
+    - [x] Float (float)
+    - [ ] Boolean
 - [ ] Control Flow
     - [ ] if-elif-else
     - [ ] while
