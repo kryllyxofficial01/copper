@@ -8,6 +8,8 @@
 #define ARG_NODE_TYPE std::pair<std::string, std::string>
 
 enum NodeType {
+    INTEGER_NODE,
+    FLOAT_NODE,
     STRING_NODE,
     VARIABLE_DEFINITION_NODE,
     VARIABLE_REDEFINITION_NODE,
@@ -20,6 +22,10 @@ enum NodeType {
 
 typedef struct AST {
     enum NodeType type;
+
+    int integer_value;
+
+    double float_value;
 
     std::string string_value;
 

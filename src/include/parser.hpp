@@ -20,6 +20,8 @@ class Parser {
         std::vector<ast_t> parse_block();
 
         ast_t parse_ID();
+        ast_t parse_integer();
+        ast_t parse_float();
         ast_t parse_string();
         ast_t parse_variable_definition();
         ast_t parse_variable_redefinition();

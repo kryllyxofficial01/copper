@@ -26,12 +26,16 @@ token_t Lexer::get_next_token() {
             this->skip_whitespace();
         }
 
-        if (__IS_ALNUM(this->current_char)) {
-            return this->get_ID();
+       if (__IS_DIGIT(this->current_char)) {
+            return this->get_number();
         }
 
         if (this->current_char == '"') {
             return this->get_string();
+        }
+
+        if (__IS_ALNUM(this->current_char)) {
+            return this->get_ID();
         }
 
         return this->get_char();
@@ -47,12 +51,48 @@ token_t Lexer::get_ID() {
     std::string value;
     while (__IS_ALNUM(this->current_char)) {
         value += this->current_char;
+
         this->next_char();
     }
 
     return (token_t) {
         .type = TT_ID,
         .value = value
+    };
+}
+
+token_t Lexer::get_number() {
+    std::string number;
+
+    int decimal_count = 0;
+    while (__IS_DIGIT(this->current_char)) {
+        if (this->current_char == '.') {
+            decimal_count++;
+        }
+
+        number += this->current_char;
+
+        this->next_char();
+    }
+
+    if (decimal_count > 1) {
+        printf(
+            "Number can only contain 1 decimal point: '%s'\n",
+            number.c_str()
+        );
+        exit(0);
+    }
+
+    if (decimal_count == 1) {
+        return (token_t) {
+            .type = TT_FLOAT,
+            .value = number
+        };
+    }
+
+    return (token_t) {
+        .type = TT_INTEGER,
+        .value = number
     };
 }
 

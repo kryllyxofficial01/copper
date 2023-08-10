@@ -40,6 +40,8 @@ ast_t Parser::parse_statement() {
 ast_t Parser::parse_expression() {
     switch (this->current_token.type) {
         case TT_ID: return this->parse_ID();
+        case TT_INTEGER: return this->parse_integer();
+        case TT_FLOAT: return this->parse_float();
         case TT_STRING: return this->parse_string();
     }
 
@@ -80,6 +82,28 @@ ast_t Parser::parse_ID() {
     else {
         return this->parse_variable_usage();
     }
+}
+
+ast_t Parser::parse_integer() {
+    ast_t int_ast;
+
+    int_ast.type = INTEGER_NODE;
+    int_ast.integer_value = std::stoi(this->current_token.value);
+
+    this->eat(TT_INTEGER);
+
+    return int_ast;
+}
+
+ast_t Parser::parse_float() {
+    ast_t float_ast;
+
+    float_ast.type = FLOAT_NODE;
+    float_ast.float_value = std::stod(this->current_token.value);
+
+    this->eat(TT_FLOAT);
+
+    return float_ast;
 }
 
 ast_t Parser::parse_string() {
@@ -225,6 +249,7 @@ void Parser::eat(enum TokenType token_type) {
             "Unexpected token: '%s'\n",
             this->current_token.value.c_str()
         );
+        exit(0);
     }
 
     this->current_token = this->tokens.at(

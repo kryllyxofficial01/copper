@@ -17,6 +17,7 @@ class Lexer {
     private:
         token_t get_next_token();
         token_t get_ID();
+        token_t get_number();
         token_t get_string();
         token_t get_char();
 

@@ -6,6 +6,7 @@
 #define WHITESPACE " \n\t"
 
 #define __IS_ALNUM(c) isalnum(c) || c == '_'
+#define __IS_DIGIT(c) isdigit(c) || c == '.'
 #define __IS_WHITESPACE(c) strchr(WHITESPACE, c)
 
 #endif

@@ -1,5 +1,2 @@
-func print_name(name: string) -> void {
-    println(name);
-}
-
-print_name("kryllyx");
+var test_var: int = 10;
+var pi: float = 3.14;

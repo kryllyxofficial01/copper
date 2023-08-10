@@ -5,6 +5,8 @@
 
 enum TokenType {
     TT_ID,
+    TT_INTEGER,
+    TT_FLOAT,
     TT_STRING,
     TT_LEFT_PAREN,
     TT_RIGHT_PAREN,
