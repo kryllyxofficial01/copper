@@ -192,6 +192,14 @@ token_t Lexer::get_char() {
                 }
             );
 
+        case '+':
+            return this->advance_with_token(
+                (token_t) {
+                    .type = TT_PLUS_SIGN,
+                    .value = "+"
+                }
+            );
+
         case '-':
             if (this->peek(1) == '>') {
                 this->next_char();
@@ -203,6 +211,13 @@ token_t Lexer::get_char() {
                     }
                 );
             }
+
+            return this->advance_with_token(
+                (token_t) {
+                    .type = TT_HYPHEN,
+                    .value = "-"
+                }
+            );
 
         default:
             printf(

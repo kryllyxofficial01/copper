@@ -1,2 +1,4 @@
-var test_var: int = 10;
-var pi: float = 3.14;
+var x: int = 1;
+var y: int = 2;
+
+var z: int = x + y;
