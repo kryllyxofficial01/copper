@@ -7,9 +7,9 @@
     - [x] Integer (int)
     - [x] Float (float)
     - [ ] Boolean
+- [ ] Operators (Math and Boolean)
+    - [ ] Implement order of operations
 - [ ] Control Flow
     - [ ] if-elif-else
     - [ ] while
     - [ ] for
-- [ ] Operators (Math and Boolean)
-    - [ ] Implement order of operations
