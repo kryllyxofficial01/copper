@@ -219,6 +219,22 @@ token_t Lexer::get_char() {
                 }
             );
 
+        case '*':
+            return this->advance_with_token(
+                (token_t) {
+                    .type = TT_ASTERICK,
+                    .value = "*"
+                }
+            );
+
+        case '/':
+            return this->advance_with_token(
+                (token_t) {
+                    .type = TT_FORWARD_SLASH,
+                    .value = "/"
+                }
+            );
+
         default:
             printf(
                 "Unknown character: '%c'\n",

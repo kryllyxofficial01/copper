@@ -23,6 +23,8 @@ enum TokenType {
 
     TT_PLUS_SIGN,
     TT_HYPHEN,
+    TT_ASTERICK,
+    TT_FORWARD_SLASH,
 
     TT_RIGHT_HYPHEN_ARROW,
 
