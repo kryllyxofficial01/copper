@@ -14,11 +14,8 @@ std::vector<token_t> Lexer::lex() {
     token_t token;
     while ((token = this->get_next_token()).type != TT_EOL) {
         tokens.push_back(token);
-
-        std::cout << token.value << std::endl;
     }
     tokens.push_back(token);
-    std::cout << token.value << std::endl;
 
     return tokens;
 }
@@ -27,17 +24,23 @@ token_t Lexer::get_next_token() {
     this->skip_whitespace();
 
     if (isdigit(this->current_char)) {
-        return this->get_number();
+        return this->get_type_number();
+    }
+    else if (this->current_char == '\"') {
+        return this->get_type_string();
+    }
+    else if (this->current_char == '\'') {
+        return this->get_type_char();
     }
     else if (isalnum(this->current_char) || this->current_char == '_') {
-        return this->get_id();
+        return this->get_type_id();
     }
     else {
-        return this->get_char();
+        return this->get_single_char();
     }
 }
 
-token_t Lexer::get_id() {
+token_t Lexer::get_type_id() {
     token_t token;
 
     std::string id;
@@ -52,7 +55,7 @@ token_t Lexer::get_id() {
     return token;
 }
 
-token_t Lexer::get_number() {
+token_t Lexer::get_type_number() {
     token_t token;
 
     std::string number;
@@ -68,7 +71,11 @@ token_t Lexer::get_number() {
     }
 
     if (decimal_count > 1) {
-        std::cout << "Only 1 decimal point permitted: '" << number << "'";
+        printf(
+            "Only 1 decimal point permitted: '%s'\n",
+            number.c_str()
+        );
+
         exit(EXIT_FAILURE);
     }
 
@@ -78,7 +85,56 @@ token_t Lexer::get_number() {
     return token;
 }
 
-token_t Lexer::get_char() {
+token_t Lexer::get_type_string() {
+    token_t token;
+
+    this->next_char();
+
+    std::string string;
+    while (this->current_char != '\"') {
+        string += this->current_char;
+
+        this->next_char();
+    }
+
+    this->next_char();
+
+    token.type = TT_STRING;
+    token.value = string;
+
+    return token;
+}
+
+token_t Lexer::get_type_char() {
+    token_t token;
+
+    this->next_char();
+
+    std::string character;
+    while (this->current_char != '\'') {
+        character += this->current_char;
+
+        this->next_char();
+    }
+
+    this->next_char();
+
+    if (character.length() > 1) {
+        printf(
+            "Character type can only contain one value: '%s'\n",
+            character.c_str()
+        );
+
+        exit(EXIT_FAILURE);
+    }
+
+    token.type = TT_CHAR;
+    token.value = character;
+
+    return token;
+}
+
+token_t Lexer::get_single_char() {
     token_t token;
 
     switch (this->current_char) {

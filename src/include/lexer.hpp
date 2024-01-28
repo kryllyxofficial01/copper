@@ -1,7 +1,7 @@
 #ifndef __LEXER_HPP
 #define __LEXER_HPP
 
-#include <iostream>
+#include <stdio.h>
 #include <string>
 #include <vector>
 
@@ -15,9 +15,11 @@ class Lexer {
 
     private:
         token_t get_next_token();
-        token_t get_id();
-        token_t get_number();
-        token_t get_char();
+        token_t get_type_id();
+        token_t get_type_number();
+        token_t get_type_string();
+        token_t get_type_char();
+        token_t get_single_char();
 
         void next_char();
         void skip_whitespace();
