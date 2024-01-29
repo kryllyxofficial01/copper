@@ -19,6 +19,6 @@ enum TokenTypes {
 typedef struct Token {
     enum TokenTypes type;
     std::string value;
-} token_t;
+};
 
 #endif

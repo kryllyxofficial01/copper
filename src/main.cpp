@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "include/lexer.hpp"
+#include "include/parser.hpp"
 #include "include/token.hpp"
 #include "include/utils.hpp"
 
@@ -23,15 +24,21 @@ int main(int argc, const char* argv[]) {
     while (getline(file, line)) {
         line = trim(line);
 
-        if (line != "") {
+        if (line != "" && line.substr(0, 2) != "//") {
             lines.push_back(line);
         }
     }
 
+    vector<Token> all_tokens;
+
     for (string line: lines) {
         Lexer lexer(line);
-        vector<token_t> tokens = lexer.lex();
+        vector<Token> tokens = lexer.lex();
+
+        all_tokens.insert(all_tokens.end(), tokens.begin(), tokens.end());
     }
+
+    Parser parser(all_tokens);
 
     return 0;
 }

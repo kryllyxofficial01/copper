@@ -11,15 +11,15 @@ class Lexer {
     public:
         Lexer(std::string line);
 
-        std::vector<token_t> lex();
+        std::vector<Token> lex();
 
     private:
-        token_t get_next_token();
-        token_t get_type_id();
-        token_t get_type_number();
-        token_t get_type_string();
-        token_t get_type_char();
-        token_t get_single_char();
+        Token get_next_token();
+        Token get_type_id();
+        Token get_type_number();
+        Token get_type_string();
+        Token get_type_char();
+        Token get_single_char();
 
         void next_char();
         void skip_whitespace();

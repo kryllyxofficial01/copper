@@ -8,10 +8,10 @@ Lexer::Lexer(std::string line) {
     this->next_char();
 }
 
-std::vector<token_t> Lexer::lex() {
-    std::vector<token_t> tokens;
+std::vector<Token> Lexer::lex() {
+    std::vector<Token> tokens;
 
-    token_t token;
+    Token token;
     while ((token = this->get_next_token()).type != TT_EOL) {
         tokens.push_back(token);
     }
@@ -20,7 +20,7 @@ std::vector<token_t> Lexer::lex() {
     return tokens;
 }
 
-token_t Lexer::get_next_token() {
+Token Lexer::get_next_token() {
     this->skip_whitespace();
 
     if (isdigit(this->current_char)) {
@@ -40,8 +40,8 @@ token_t Lexer::get_next_token() {
     }
 }
 
-token_t Lexer::get_type_id() {
-    token_t token;
+Token Lexer::get_type_id() {
+    Token token;
 
     std::string id;
     while (isalnum(this->current_char) || this->current_char == '_') {
@@ -55,8 +55,8 @@ token_t Lexer::get_type_id() {
     return token;
 }
 
-token_t Lexer::get_type_number() {
-    token_t token;
+Token Lexer::get_type_number() {
+    Token token;
 
     std::string number;
     int decimal_count = 0;
@@ -85,8 +85,8 @@ token_t Lexer::get_type_number() {
     return token;
 }
 
-token_t Lexer::get_type_string() {
-    token_t token;
+Token Lexer::get_type_string() {
+    Token token;
 
     this->next_char();
 
@@ -105,8 +105,8 @@ token_t Lexer::get_type_string() {
     return token;
 }
 
-token_t Lexer::get_type_char() {
-    token_t token;
+Token Lexer::get_type_char() {
+    Token token;
 
     this->next_char();
 
@@ -134,8 +134,8 @@ token_t Lexer::get_type_char() {
     return token;
 }
 
-token_t Lexer::get_single_char() {
-    token_t token;
+Token Lexer::get_single_char() {
+    Token token;
 
     switch (this->current_char) {
         case '(': {
