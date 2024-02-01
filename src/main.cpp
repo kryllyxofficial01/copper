@@ -37,6 +37,9 @@ int main(int argc, const char* argv[]) {
 
         all_tokens.insert(all_tokens.end(), tokens.begin(), tokens.end());
     }
+    all_tokens.push_back((Token) {
+        .type = TT_EOF, .value = "\0"
+    });
 
     Parser parser(all_tokens);
 

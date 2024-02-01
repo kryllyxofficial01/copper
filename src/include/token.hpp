@@ -13,10 +13,10 @@ enum TokenTypes {
     TT_EQUALS_SIGN,
     TT_COLON,
 
-    TT_EOL
+    TT_EOL, TT_EOF
 };
 
-typedef struct Token {
+struct Token {
     enum TokenTypes type;
     std::string value;
 };

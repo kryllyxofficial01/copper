@@ -41,24 +41,21 @@ Token Lexer::get_next_token() {
 }
 
 Token Lexer::get_type_id() {
-    Token token;
-
     std::string id;
     while (isalnum(this->current_char) || this->current_char == '_') {
         id += this->current_char;
         this->next_char();
     }
 
-    token.type = TT_ID;
-    token.value = id;
-
-    return token;
+    return (Token) {
+        .type = TT_ID,
+        .value = id
+    };
 }
 
 Token Lexer::get_type_number() {
-    Token token;
-
     std::string number;
+
     int decimal_count = 0;
     while (isdigit(this->current_char) || this->current_char == '.') {
         if (this->current_char == '.') {
@@ -79,15 +76,13 @@ Token Lexer::get_type_number() {
         exit(EXIT_FAILURE);
     }
 
-    token.type = decimal_count == 1 ? TT_FLOAT : TT_INT;
-    token.value = number;
-
-    return token;
+    return (Token) {
+        .type = decimal_count == 1 ? TT_FLOAT : TT_INT,
+        .value = number
+    };
 }
 
 Token Lexer::get_type_string() {
-    Token token;
-
     this->next_char();
 
     std::string string;
@@ -99,15 +94,13 @@ Token Lexer::get_type_string() {
 
     this->next_char();
 
-    token.type = TT_STRING;
-    token.value = string;
-
-    return token;
+    return (Token) {
+        .type = TT_STRING,
+        .value = string
+    };
 }
 
 Token Lexer::get_type_char() {
-    Token token;
-
     this->next_char();
 
     std::string character;
@@ -128,55 +121,59 @@ Token Lexer::get_type_char() {
         exit(EXIT_FAILURE);
     }
 
-    token.type = TT_CHAR;
-    token.value = character;
-
-    return token;
+    return (Token) {
+        .type = TT_CHAR,
+        .value = character
+    };
 }
 
 Token Lexer::get_single_char() {
-    Token token;
-
     switch (this->current_char) {
         case '(': {
-            token.type = TT_LEFT_PAREN;
-            token.value = "(";
+            this->next_char();
 
-            break;
+            return (Token) {
+                .type = TT_LEFT_PAREN,
+                .value = "("
+            };
         }
 
         case ')': {
-            token.type = TT_RIGHT_PAREN;
-            token.value = ")";
+            this->next_char();
 
-            break;
+            return (Token) {
+                .type = TT_RIGHT_PAREN,
+                .value = ")"
+            };
         }
 
         case '=': {
-            token.type = TT_EQUALS_SIGN;
-            token.value = "=";
+            this->next_char();
 
-            break;
+            return (Token) {
+                .type = TT_EQUALS_SIGN,
+                .value = "="
+            };
         }
 
         case ':': {
-            token.type = TT_COLON;
-            token.value = ":";
+            this->next_char();
 
-            break;
+            return (Token) {
+                .type = TT_COLON,
+                .value = ":"
+            };
         }
 
         case ';': {
-            token.type = TT_EOL;
-            token.value = ";";
+            this->next_char();
 
-            break;
+            return (Token) {
+                .type = TT_EOL,
+                .value = ";"
+            };
         }
     }
-
-    this->next_char();
-
-    return token;
 }
 
 void Lexer::next_char() {

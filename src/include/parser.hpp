@@ -5,13 +5,12 @@
 #include <string>
 
 #include "token.hpp"
-#include "node.hpp"
 
 class Parser {
     public:
         Parser(std::vector<Token> tokens);
 
-        std::vector<Node> parser();
+        void parse();
 
     private:
         void next_token();

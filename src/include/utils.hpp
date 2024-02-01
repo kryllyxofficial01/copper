@@ -2,6 +2,8 @@
 #define __UTILS_HPP
 
 #include <string>
+#include <vector>
+#include <stdio.h>
 
 #define __WHITESPACE__ " \n\t\r\v\f"
 
