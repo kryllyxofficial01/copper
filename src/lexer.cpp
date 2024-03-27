@@ -1,9 +1,9 @@
 #include "include/lexer.hpp"
 
-Lexer::Lexer(std::string line) {
-    this->line = line;
+Lexer::Lexer(std::string lines) {
+    this->lines = lines;
 
-    this->index = 0;
+    this->index = -1;
 
     this->next_char();
 }
@@ -12,7 +12,7 @@ std::vector<Token> Lexer::lex() {
     std::vector<Token> tokens;
 
     Token token;
-    while ((token = this->get_next_token()).type != TT_EOL) {
+    while ((token = this->get_next_token()).type != TT_EOF) {
         tokens.push_back(token);
     }
     tokens.push_back(token);
@@ -21,23 +21,26 @@ std::vector<Token> Lexer::lex() {
 }
 
 Token Lexer::get_next_token() {
-    this->skip_whitespace();
+    while (this->index < this->lines.size()) {
+        this->skip_whitespace();
 
-    if (isdigit(this->current_char)) {
-        return this->get_type_number();
-    }
-    else if (this->current_char == '\"') {
-        return this->get_type_string();
-    }
-    else if (this->current_char == '\'') {
-        return this->get_type_char();
-    }
-    else if (isalnum(this->current_char) || this->current_char == '_') {
-        return this->get_type_id();
-    }
-    else {
+        if (isdigit(this->current_char)) {
+            return this->get_type_number();
+        }
+        else if (this->current_char == '\"') {
+            return this->get_type_string();
+        }
+        else if (isalnum(this->current_char) || this->current_char == '_') {
+            return this->get_type_id();
+        }
+
         return this->get_single_char();
     }
+
+    return (Token) {
+        .type = TT_EOF,
+        .value = "\0"
+    };
 }
 
 Token Lexer::get_type_id() {
@@ -100,33 +103,6 @@ Token Lexer::get_type_string() {
     };
 }
 
-Token Lexer::get_type_char() {
-    this->next_char();
-
-    std::string character;
-    while (this->current_char != '\'') {
-        character += this->current_char;
-
-        this->next_char();
-    }
-
-    this->next_char();
-
-    if (character.length() > 1) {
-        printf(
-            "Character type can only contain one value: '%s'\n",
-            character.c_str()
-        );
-
-        exit(EXIT_FAILURE);
-    }
-
-    return (Token) {
-        .type = TT_CHAR,
-        .value = character
-    };
-}
-
 Token Lexer::get_single_char() {
     switch (this->current_char) {
         case '(': {
@@ -147,6 +123,24 @@ Token Lexer::get_single_char() {
             };
         }
 
+        case '{': {
+            this->next_char();
+
+            return (Token) {
+                .type = TT_LEFT_BRACE,
+                .value = "{"
+            };
+        }
+
+        case '}': {
+            this->next_char();
+
+            return (Token) {
+                .type = TT_RIGHT_BRACE,
+                .value = "}"
+            };
+        }
+
         case '=': {
             this->next_char();
 
@@ -156,12 +150,36 @@ Token Lexer::get_single_char() {
             };
         }
 
+        case '-': {
+            this->next_char();
+
+            if (this->current_char == '>') {
+                this->next_char();
+
+                return (Token) {
+                    .type = TT_RIGHT_ARROW,
+                    .value = "->"
+                };
+            }
+
+            // add hyphen token
+        }
+
         case ':': {
             this->next_char();
 
             return (Token) {
                 .type = TT_COLON,
                 .value = ":"
+            };
+        }
+
+        case ',': {
+            this->next_char();
+
+            return (Token) {
+                .type = TT_COMMA,
+                .value = ","
             };
         }
 
@@ -177,9 +195,7 @@ Token Lexer::get_single_char() {
 }
 
 void Lexer::next_char() {
-    if (this->index < this->line.size()) {
-        this->current_char = this->line.at(this->index++);
-    }
+    this->current_char = this->lines[++this->index];
 }
 
 void Lexer::skip_whitespace() {

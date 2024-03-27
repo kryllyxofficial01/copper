@@ -7,11 +7,13 @@ enum TokenTypes {
     TT_ID,
     TT_STRING,
     TT_INT, TT_FLOAT,
-    TT_CHAR,
 
     TT_LEFT_PAREN, TT_RIGHT_PAREN,
-    TT_EQUALS_SIGN,
-    TT_COLON,
+    TT_LEFT_BRACE, TT_RIGHT_BRACE,
+
+    TT_EQUALS_SIGN, TT_RIGHT_ARROW,
+
+    TT_COLON, TT_COMMA,
 
     TT_EOL, TT_EOF
 };

@@ -1,3 +1,7 @@
-putc('a');
+func test(name: string, age: int) -> void {
+    println(name);
 
-// var x: int = 19;
+    var temp: int = age;
+
+    println(temp);
+}

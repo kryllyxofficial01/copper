@@ -7,41 +7,30 @@
 #include "include/token.hpp"
 #include "include/utils.hpp"
 
-using namespace std;
-
 int main(int argc, const char* argv[]) {
     if (argc < 2) {
-        cout << "Syntax: " + string(argv[0]) + " <name of file>" << endl;
+        std::cout << "Syntax: " + std::string(argv[0]) + " <name of file>" << std::endl;
         exit(EXIT_FAILURE);
     }
 
-    string filepath = argv[1];
+    std::string filepath = argv[1];
 
-    ifstream file(filepath);
+    std::ifstream file(filepath);
 
-    string line;
-    vector<string> lines;
+    std::string line;
+    std::string lines;
     while (getline(file, line)) {
-        line = trim(line);
+        line = trim(line, __WHITESPACE__);
 
         if (line != "" && line.substr(0, 2) != "//") {
-            lines.push_back(line);
+            lines += line;
         }
     }
 
-    vector<Token> all_tokens;
+    Lexer lexer(lines);
+    std::vector<Token> tokens = lexer.lex();
 
-    for (string line: lines) {
-        Lexer lexer(line);
-        vector<Token> tokens = lexer.lex();
-
-        all_tokens.insert(all_tokens.end(), tokens.begin(), tokens.end());
-    }
-    all_tokens.push_back((Token) {
-        .type = TT_EOF, .value = "\0"
-    });
-
-    Parser parser(all_tokens);
+    // Parser parser(tokens);
 
     return 0;
 }

@@ -9,7 +9,7 @@
 
 class Lexer {
     public:
-        Lexer(std::string line);
+        Lexer(std::string lines);
 
         std::vector<Token> lex();
 
@@ -18,13 +18,12 @@ class Lexer {
         Token get_type_id();
         Token get_type_number();
         Token get_type_string();
-        Token get_type_char();
         Token get_single_char();
 
         void next_char();
         void skip_whitespace();
 
-        std::string line;
+        std::string lines;
 
         size_t index;
         char current_char;
