@@ -6,4 +6,6 @@
     // println(temp);
 // }
 
-var test: int = 19;
+// var test: int = 19;
+
+test("tset", 19, 17);

@@ -32,6 +32,9 @@ Node Parser::parse_id() {
     if (this->current_token.value == "var") {
         return this->parse_variable_definition();
     }
+    else if (this->peek(1).type == TT_LEFT_PAREN) {
+        return this->parse_function_call();
+    }
 }
 
 Node Parser::parse_variable_definition() {
@@ -56,16 +59,37 @@ Node Parser::parse_variable_definition() {
     }
 
     for (Token token: value_tokens) {
-        variable_node.value.value += token.value;
+        variable_node.value.value.push_back(token);
     }
 
     return variable_node;
 }
 
-Token Parser::peek(int offset) {
-    return this->tokens.at(
-        this->index + offset
-    );
+Node Parser::parse_function_call() {
+    FunctionCallNode function_call_node;
+
+    function_call_node.name = this->current_token.value;
+    this->eat(TT_ID); // function name
+
+    this->eat(TT_LEFT_PAREN);
+
+    GenericNode argument;
+    while (this->current_token.type != TT_RIGHT_PAREN) {
+        argument.value.clear();
+
+        while (this->current_token.type != TT_COMMA && this->current_token.type != TT_RIGHT_PAREN) {
+            argument.value.push_back(this->current_token);
+            this->next_token();
+        }
+
+        function_call_node.arguments.push_back(argument);
+
+        if (this->current_token.type == TT_COMMA) this->eat(TT_COMMA);
+    }
+
+    this->eat(TT_RIGHT_PAREN);
+
+    return function_call_node;
 }
 
 void Parser::eat(enum TokenTypes expected_type) {
@@ -83,4 +107,10 @@ void Parser::eat(enum TokenTypes expected_type) {
 
 void Parser::next_token() {
     this->current_token = this->tokens.at(this->index++);
+}
+
+Token Parser::peek(int offset) {
+    return this->tokens.at(
+        (this->index + offset) - 1
+    );
 }

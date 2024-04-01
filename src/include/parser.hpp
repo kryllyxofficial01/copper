@@ -8,6 +8,7 @@
 
 #include "nodes/master_node.hpp"
 #include "nodes/variable_node.hpp"
+#include "nodes/function_node.hpp"
 
 class Parser {
     public:
@@ -20,10 +21,11 @@ class Parser {
         Node parse_id();
 
         Node parse_variable_definition();
+        Node parse_function_call();
 
-        Token peek(int offset);
         void eat(enum TokenTypes expected_type);
         void next_token();
+        Token peek(int offset);
 
         std::vector<Token> tokens;
 

@@ -4,6 +4,7 @@
 enum NodeTypes {
     MASTER_NODE,
     VARIABLE_DEFINITION_NODE,
+    FUNCTION_CALL_NODE,
     GENERIC_NODE
 };
 

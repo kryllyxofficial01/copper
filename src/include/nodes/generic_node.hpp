@@ -1,7 +1,7 @@
 #ifndef __GENERIC_NODE_HPP
 #define __GENERIC_NODE_HPP
 
-#include <string>
+#include <vector>
 
 #include "node.hpp"
 
@@ -11,7 +11,7 @@ class GenericNode: public Node {
             this->type = GENERIC_NODE;
         }
 
-        std::string value;
+        std::vector<Token> value;
 };
 
 #endif
