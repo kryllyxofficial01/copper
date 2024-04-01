@@ -1,7 +1,9 @@
-func test(name: string, age: int) -> void {
-    println(name);
+// func test(name: string, age: int) -> void {
+    // println(name);
 
-    var temp: int = age;
+    // var temp: int = age;
 
-    println(temp);
-}
+    // println(temp);
+// }
+
+var test: int = 19;

@@ -30,7 +30,8 @@ int main(int argc, const char* argv[]) {
     Lexer lexer(lines);
     std::vector<Token> tokens = lexer.lex();
 
-    // Parser parser(tokens);
+    Parser parser(tokens);
+    parser.parse();
 
     return 0;
 }

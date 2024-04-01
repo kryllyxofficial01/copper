@@ -1,0 +1,15 @@
+#ifndef __NODE_HPP
+#define __NODE_HPP
+
+enum NodeTypes {
+    MASTER_NODE,
+    VARIABLE_DEFINITION_NODE,
+    GENERIC_NODE
+};
+
+class Node {
+    public:
+        enum NodeTypes type;
+};
+
+#endif
