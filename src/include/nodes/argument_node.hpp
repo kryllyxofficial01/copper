@@ -3,14 +3,9 @@
 
 #include <string>
 
-#include "node.hpp"
 
-class ArgumentNode: public Node {
+class ArgumentNode {
     public:
-        ArgumentNode() {
-            this->type = ARGUMENT_NODE;
-        }
-
         std::string name;
         std::string value_type;
 };

@@ -1,6 +1,8 @@
 #ifndef __NODE_HPP
 #define __NODE_HPP
 
+#include <any>
+
 enum NodeTypes {
     MASTER_NODE,
     VARIABLE_DEFINITION_NODE,
@@ -10,9 +12,6 @@ enum NodeTypes {
     GENERIC_NODE
 };
 
-class Node {
-    public:
-        enum NodeTypes type;
-};
+#define NODE std::pair<enum NodeTypes, std::any>
 
 #endif

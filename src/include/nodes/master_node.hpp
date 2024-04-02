@@ -2,16 +2,13 @@
 #define __MASTER_NODE_HPP
 
 #include <vector>
+#include <any>
 
 #include "node.hpp"
 
-class MasterNode: public Node {
+class MasterNode {
     public:
-        MasterNode() {
-            this->type = MASTER_NODE;
-        }
-
-        std::vector<Node> nodes;
+        std::vector<std::pair<enum NodeTypes, std::any>> nodes;
 };
 
 #endif

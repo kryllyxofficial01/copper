@@ -3,12 +3,14 @@
 
 #include <vector>
 #include <string>
+#include <any>
 
 #include "token.hpp"
 
 #include "nodes/master_node.hpp"
 #include "nodes/variable_node.hpp"
 #include "nodes/function_node.hpp"
+#include "nodes/node.hpp"
 
 class Parser {
     public:
@@ -17,12 +19,12 @@ class Parser {
         MasterNode parse();
 
     private:
-        Node parse_next_token();
-        Node parse_id();
+        NODE parse_next_token();
+        NODE parse_id();
 
-        VariableDefinitionNode parse_variable_definition();
-        FunctionCallNode parse_function_call();
-        FunctionDefinitionNode parse_function_definition();
+        NODE parse_variable_definition();
+        NODE parse_function_call();
+        NODE parse_function_definition();
 
         void eat(enum TokenTypes expected_type);
         void next_token();

@@ -4,30 +4,21 @@
 #include <string>
 #include <vector>
 
-#include "node.hpp"
 #include "generic_node.hpp"
 #include "argument_node.hpp"
 
-class FunctionCallNode: public Node {
+class FunctionCallNode {
     public:
-        FunctionCallNode() {
-            this->type = FUNCTION_CALL_NODE;
-        }
-
         std::string name;
         std::vector<GenericNode> arguments;
 };
 
-class FunctionDefinitionNode: public Node {
+class FunctionDefinitionNode {
     public:
-        FunctionDefinitionNode() {
-            this->type = FUNCTION_DEFINITION_NODE;
-        }
-
         std::string name;
         std::string return_type;
         std::vector<ArgumentNode> arguments;
-        std::vector<MasterNode> lines;
+        std::vector<NODE> body;
 };
 
 #endif

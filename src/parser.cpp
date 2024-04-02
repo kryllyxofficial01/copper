@@ -16,19 +16,19 @@ MasterNode Parser::parse() {
             this->parse_next_token()
         );
 
-        this->eat(TT_EOL);
+        if (this->peek(-1).type != TT_RIGHT_BRACE) this->eat(TT_EOL);
     }
 
     return master_node;
 }
 
-Node Parser::parse_next_token() {
+NODE Parser::parse_next_token() {
     if (this->current_token.type == TT_ID) {
         return this->parse_id();
     }
 }
 
-Node Parser::parse_id() {
+NODE Parser::parse_id() {
     if (this->current_token.value == "var") {
         return this->parse_variable_definition();
     }
@@ -40,17 +40,17 @@ Node Parser::parse_id() {
     }
 }
 
-VariableDefinitionNode Parser::parse_variable_definition() {
-    VariableDefinitionNode variable_node;
+NODE Parser::parse_variable_definition() {
+    VariableDefinitionNode variable_definition_node;
 
     this->eat(TT_ID); // var
 
-    variable_node.name = this->current_token.value;
+    variable_definition_node.name = this->current_token.value;
     this->eat(TT_ID); // variable name
 
     this->eat(TT_COLON);
 
-    variable_node.value_type = this->current_token.value;
+    variable_definition_node.value_type = this->current_token.value;
     this->eat(TT_ID); // variable type
 
     this->eat(TT_EQUALS_SIGN);
@@ -62,13 +62,16 @@ VariableDefinitionNode Parser::parse_variable_definition() {
     }
 
     for (Token token: value_tokens) {
-        variable_node.value.value.push_back(token);
+        variable_definition_node.value.value.push_back(token);
     }
 
-    return variable_node;
+    return std::make_pair(
+        VARIABLE_DEFINITION_NODE,
+        std::make_any<VariableDefinitionNode>(variable_definition_node)
+    );
 }
 
-FunctionCallNode Parser::parse_function_call() {
+NODE Parser::parse_function_call() {
     FunctionCallNode function_call_node;
 
     function_call_node.name = this->current_token.value;
@@ -92,10 +95,13 @@ FunctionCallNode Parser::parse_function_call() {
 
     this->eat(TT_RIGHT_PAREN);
 
-    return function_call_node;
+    return std::make_pair(
+        FUNCTION_CALL_NODE,
+        std::make_any<FunctionCallNode>(function_call_node)
+    );
 }
 
-FunctionDefinitionNode Parser::parse_function_definition() {
+NODE Parser::parse_function_definition() {
     FunctionDefinitionNode function_definition_node;
 
     this->eat(TT_ID); // func
@@ -133,20 +139,20 @@ FunctionDefinitionNode Parser::parse_function_definition() {
 
     this->eat(TT_LEFT_BRACE);
 
-    std::vector<Token> current_line_tokens;
     while (this->current_token.type != TT_RIGHT_BRACE) {
-        current_line_tokens.clear();
+        NODE statement = this->parse_next_token();
 
-        while (this->current_token.type != TT_EOL) {
-            current_line_tokens.push_back(this->current_token);
-            this->next_token();
-        }
-        current_line_tokens.push_back(this->current_token);
+        function_definition_node.body.push_back(statement);
 
-        // somehow parse each line
+        this->eat(TT_EOL);
     }
 
     this->eat(TT_RIGHT_BRACE);
+
+    return std::make_pair(
+        FUNCTION_DEFINITION_NODE,
+        std::make_any<FunctionDefinitionNode>(function_definition_node)
+    );
 }
 
 void Parser::eat(enum TokenTypes expected_type) {

@@ -3,15 +3,10 @@
 
 #include <string>
 
-#include "node.hpp"
 #include "generic_node.hpp"
 
-class VariableDefinitionNode: public Node {
+class VariableDefinitionNode {
     public:
-        VariableDefinitionNode() {
-            this->type = VARIABLE_DEFINITION_NODE;
-        }
-
         std::string name;
         std::string value_type;
         GenericNode value;

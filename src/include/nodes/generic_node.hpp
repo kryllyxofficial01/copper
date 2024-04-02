@@ -3,14 +3,8 @@
 
 #include <vector>
 
-#include "node.hpp"
-
-class GenericNode: public Node {
+class GenericNode {
     public:
-        GenericNode() {
-            this->type = GENERIC_NODE;
-        }
-
         std::vector<Token> value;
 };
 
