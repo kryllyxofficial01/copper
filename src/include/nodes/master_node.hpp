@@ -8,7 +8,7 @@
 
 class MasterNode {
     public:
-        std::vector<std::pair<enum NodeTypes, std::any>> nodes;
+        std::vector<NODE> nodes;
 };
 
 #endif

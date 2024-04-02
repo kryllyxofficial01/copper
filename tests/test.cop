@@ -1,11 +1,8 @@
-func test(name: string, age: int) -> void {
-    println(name);
+var test: boolean = True;
 
-    var temp: int = age;
-
-    println(temp);
+if (test) {
+    println("test");
 }
-
-// var test: int = 19;
-
-//test("tset", 19, 17);
+else {
+    println("tset");
+}

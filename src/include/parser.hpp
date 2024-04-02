@@ -9,6 +9,7 @@
 
 #include "nodes/master_node.hpp"
 #include "nodes/variable_node.hpp"
+#include "nodes/if_statement_node.hpp"
 #include "nodes/function_node.hpp"
 #include "nodes/node.hpp"
 
@@ -21,8 +22,10 @@ class Parser {
     private:
         NODE parse_next_token();
         NODE parse_id();
+        std::vector<NODE> parse_block();
 
         NODE parse_variable_definition();
+        NODE parse_if_statement();
         NODE parse_function_call();
         NODE parse_function_definition();
 

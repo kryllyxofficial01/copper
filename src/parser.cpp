@@ -32,12 +32,33 @@ NODE Parser::parse_id() {
     if (this->current_token.value == "var") {
         return this->parse_variable_definition();
     }
+    else if (this->current_token.value == "if") {
+        return this->parse_if_statement();
+    }
     else if (this->current_token.value == "func") {
         return this->parse_function_definition();
     }
     else if (this->peek(1).type == TT_LEFT_PAREN) {
         return this->parse_function_call();
     }
+}
+
+std::vector<NODE> Parser::parse_block() {
+    std::vector<NODE> statements;
+
+    this->eat(TT_LEFT_BRACE);
+
+    while (this->current_token.type != TT_RIGHT_BRACE) {
+        NODE statement = this->parse_next_token();
+
+        statements.push_back(statement);
+
+        this->eat(TT_EOL);
+    }
+
+    this->eat(TT_RIGHT_BRACE);
+
+    return statements;
 }
 
 NODE Parser::parse_variable_definition() {
@@ -68,6 +89,45 @@ NODE Parser::parse_variable_definition() {
     return std::make_pair(
         VARIABLE_DEFINITION_NODE,
         std::make_any<VariableDefinitionNode>(variable_definition_node)
+    );
+}
+
+NODE Parser::parse_if_statement() {
+    IfStatementNode if_statement_node;
+
+    this->eat(TT_ID); // if
+
+    this->eat(TT_LEFT_PAREN);
+
+    while (this->current_token.type != TT_RIGHT_PAREN) {
+        if_statement_node.conditional.value.push_back(this->current_token);
+
+        this->next_token();
+    }
+
+    this->eat(TT_RIGHT_PAREN);
+
+    if_statement_node.body = this->parse_block();
+
+    if (this->current_token.value == "else") {
+        IfElseStatementNode if_else_statement_node;
+
+        if_else_statement_node.conditional = if_statement_node.conditional;
+        if_else_statement_node.if_body = if_statement_node.body;
+
+        this->eat(TT_ID); // else
+
+        if_else_statement_node.else_body = this->parse_block();
+
+        return std::make_pair(
+            IF_ELSE_STATEMENT_NODE,
+            std::make_any<IfElseStatementNode>(if_else_statement_node)
+        );
+    }
+
+    return std::make_pair(
+        IF_STATEMENT_NODE,
+        std::make_any<IfStatementNode>(if_statement_node)
     );
 }
 
