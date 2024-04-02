@@ -14,14 +14,15 @@ class Parser {
     public:
         Parser(std::vector<Token> tokens);
 
-        Node parse();
+        MasterNode parse();
 
     private:
         Node parse_next_token();
         Node parse_id();
 
-        Node parse_variable_definition();
-        Node parse_function_call();
+        VariableDefinitionNode parse_variable_definition();
+        FunctionCallNode parse_function_call();
+        FunctionDefinitionNode parse_function_definition();
 
         void eat(enum TokenTypes expected_type);
         void next_token();

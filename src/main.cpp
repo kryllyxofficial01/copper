@@ -6,6 +6,8 @@
 #include "include/parser.hpp"
 #include "include/token.hpp"
 #include "include/utils.hpp"
+#include "include/nodes/node.hpp"
+#include "include/nodes/master_node.hpp"
 
 int main(int argc, const char* argv[]) {
     if (argc < 2) {
@@ -31,7 +33,7 @@ int main(int argc, const char* argv[]) {
     std::vector<Token> tokens = lexer.lex();
 
     Parser parser(tokens);
-    parser.parse();
+    MasterNode ast = parser.parse();
 
     return 0;
 }

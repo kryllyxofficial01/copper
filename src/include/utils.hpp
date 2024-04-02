@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include <stdio.h>
+#include <memory>
 
 #define __WHITESPACE__ " \n\t\r\v\f"
 

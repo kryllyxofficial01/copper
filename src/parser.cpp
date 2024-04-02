@@ -8,7 +8,7 @@ Parser::Parser(std::vector<Token> tokens) {
     this->next_token();
 }
 
-Node Parser::parse() {
+MasterNode Parser::parse() {
     MasterNode master_node;
 
     while (this->current_token.type != TT_EOF) {
@@ -32,12 +32,15 @@ Node Parser::parse_id() {
     if (this->current_token.value == "var") {
         return this->parse_variable_definition();
     }
+    else if (this->current_token.value == "func") {
+        return this->parse_function_definition();
+    }
     else if (this->peek(1).type == TT_LEFT_PAREN) {
         return this->parse_function_call();
     }
 }
 
-Node Parser::parse_variable_definition() {
+VariableDefinitionNode Parser::parse_variable_definition() {
     VariableDefinitionNode variable_node;
 
     this->eat(TT_ID); // var
@@ -65,7 +68,7 @@ Node Parser::parse_variable_definition() {
     return variable_node;
 }
 
-Node Parser::parse_function_call() {
+FunctionCallNode Parser::parse_function_call() {
     FunctionCallNode function_call_node;
 
     function_call_node.name = this->current_token.value;
@@ -90,6 +93,60 @@ Node Parser::parse_function_call() {
     this->eat(TT_RIGHT_PAREN);
 
     return function_call_node;
+}
+
+FunctionDefinitionNode Parser::parse_function_definition() {
+    FunctionDefinitionNode function_definition_node;
+
+    this->eat(TT_ID); // func
+
+    function_definition_node.name = this->current_token.value;
+    this->eat(TT_ID); // function name
+
+    this->eat(TT_LEFT_PAREN);
+
+    ArgumentNode argument;
+    while (this->current_token.type != TT_RIGHT_PAREN) {
+        argument.name = argument.value_type = "";
+
+        while (this->current_token.type != TT_COMMA && this->current_token.type != TT_RIGHT_PAREN) {
+            argument.name = this->current_token.value;
+            this->eat(TT_ID); // argument name
+
+            this->eat(TT_COLON);
+
+            argument.value_type = this->current_token.value;
+            this->eat(TT_ID); // argument type
+        }
+
+        function_definition_node.arguments.push_back(argument);
+
+        if (this->current_token.type == TT_COMMA) this->eat(TT_COMMA);
+    }
+
+    this->eat(TT_RIGHT_PAREN);
+
+    this->eat(TT_RIGHT_ARROW);
+
+    function_definition_node.return_type = this->current_token.value;
+    this->eat(TT_ID); // return type
+
+    this->eat(TT_LEFT_BRACE);
+
+    std::vector<Token> current_line_tokens;
+    while (this->current_token.type != TT_RIGHT_BRACE) {
+        current_line_tokens.clear();
+
+        while (this->current_token.type != TT_EOL) {
+            current_line_tokens.push_back(this->current_token);
+            this->next_token();
+        }
+        current_line_tokens.push_back(this->current_token);
+
+        // somehow parse each line
+    }
+
+    this->eat(TT_RIGHT_BRACE);
 }
 
 void Parser::eat(enum TokenTypes expected_type) {
