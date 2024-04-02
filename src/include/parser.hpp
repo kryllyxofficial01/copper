@@ -23,6 +23,7 @@ class Parser {
         NODE parse_next_token();
         NODE parse_id();
         std::vector<NODE> parse_block();
+        GenericNode parse_expression(enum TokenTypes termination_token);
 
         NODE parse_variable_definition();
         NODE parse_if_statement();

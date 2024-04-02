@@ -61,6 +61,18 @@ std::vector<NODE> Parser::parse_block() {
     return statements;
 }
 
+GenericNode Parser::parse_expression(enum TokenTypes termination_token) {
+    GenericNode node;
+
+    while (this->current_token.type != termination_token) {
+        node.value.push_back(this->current_token);
+
+        this->next_token();
+    }
+
+    return node;
+}
+
 NODE Parser::parse_variable_definition() {
     VariableDefinitionNode variable_definition_node;
 
@@ -76,15 +88,7 @@ NODE Parser::parse_variable_definition() {
 
     this->eat(TT_EQUALS_SIGN);
 
-    std::vector<Token> value_tokens;
-    while (this->current_token.type != TT_EOL) {
-        value_tokens.push_back(this->current_token);
-        this->next_token();
-    }
-
-    for (Token token: value_tokens) {
-        variable_definition_node.value.value.push_back(token);
-    }
+    variable_definition_node.value = this->parse_expression(TT_EOL);
 
     return std::make_pair(
         VARIABLE_DEFINITION_NODE,
@@ -99,11 +103,7 @@ NODE Parser::parse_if_statement() {
 
     this->eat(TT_LEFT_PAREN);
 
-    while (this->current_token.type != TT_RIGHT_PAREN) {
-        if_statement_node.conditional.value.push_back(this->current_token);
-
-        this->next_token();
-    }
+    if_statement_node.conditional = this->parse_expression(TT_RIGHT_PAREN);
 
     this->eat(TT_RIGHT_PAREN);
 
