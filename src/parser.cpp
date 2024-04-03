@@ -32,6 +32,9 @@ NODE Parser::parse_id() {
     if (this->current_token.value == "var") {
         return this->parse_variable_definition();
     }
+    else if (this->current_token.value == "modify") { // not the greatest word choice, but idk
+        return this->parse_variable_modification();
+    }
     else if (this->current_token.value == "if") {
         return this->parse_if_statement();
     }
@@ -93,6 +96,24 @@ NODE Parser::parse_variable_definition() {
     return std::make_pair(
         VARIABLE_DEFINITION_NODE,
         std::make_any<VariableDefinitionNode>(variable_definition_node)
+    );
+}
+
+NODE Parser::parse_variable_modification() {
+    VariableModificationNode variable_modification_node;
+
+    this->eat(TT_ID); // modify
+
+    variable_modification_node.name = this->current_token.value;
+    this->eat(TT_ID); // variable name
+
+    this->eat(TT_EQUALS_SIGN);
+
+    variable_modification_node.new_value = this->parse_expression(TT_EOL);
+
+    return std::make_pair(
+        VARIABLE_MODIFICATION_NODE,
+        std::make_any<VariableModificationNode>(variable_modification_node)
     );
 }
 

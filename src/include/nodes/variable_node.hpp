@@ -12,4 +12,10 @@ class VariableDefinitionNode {
         GenericNode value;
 };
 
+class VariableModificationNode {
+    public:
+        std::string name;
+        GenericNode new_value;
+};
+
 #endif

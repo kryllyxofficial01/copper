@@ -1,8 +1,2 @@
-var test: boolean = True;
-
-if (test) {
-    println("test");
-}
-else {
-    println("tset");
-}
+var test: string = "tset";
+modify test = "stet";
