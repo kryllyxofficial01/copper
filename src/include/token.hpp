@@ -1,39 +1,27 @@
-#ifndef _TOKEN_HPP
-#define _TOKEN_HPP
+#ifndef __TOKEN_HPP
+#define __TOKEN_HPP
 
 #include <string>
 
-enum TokenType {
+enum TokenTypes {
     TT_ID,
-    TT_INTEGER,
-    TT_FLOAT,
     TT_STRING,
+    TT_INT, TT_FLOAT,
 
-    TT_LEFT_PAREN,
-    TT_RIGHT_PAREN,
-    TT_LEFT_BRACE,
-    TT_RIGHT_BRACE,
-
-    TT_SEMICOLON,
-    TT_COLON,
-    TT_COMMA,
+    TT_LEFT_PAREN, TT_RIGHT_PAREN,
+    TT_LEFT_BRACE, TT_RIGHT_BRACE,
 
     TT_EQUALS_SIGN,
-    TT_ASSIGNMENT_OPERATOR,
+    TT_RIGHT_ARROW, // ->
 
-    TT_PLUS_SIGN,
-    TT_HYPHEN,
-    TT_ASTERICK,
-    TT_FORWARD_SLASH,
+    TT_COLON, TT_COMMA,
 
-    TT_RIGHT_HYPHEN_ARROW,
-
-    TT_EOF
+    TT_EOL, TT_EOF
 };
 
-typedef struct Token {
-    enum TokenType type;
+struct Token {
+    enum TokenTypes type;
     std::string value;
-} token_t;
+};
 
 #endif

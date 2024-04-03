@@ -1,17 +1,17 @@
 #include "include/lexer.hpp"
 
-Lexer::Lexer(std::string source) {
-    this->source = source;
+Lexer::Lexer(std::string lines) {
+    this->lines = lines;
 
     this->index = -1;
 
     this->next_char();
 }
 
-std::vector<token_t> Lexer::lex() {
-    std::vector<token_t> tokens;
+std::vector<Token> Lexer::lex() {
+    std::vector<Token> tokens;
 
-    token_t token;
+    Token token;
     while ((token = this->get_next_token()).type != TT_EOF) {
         tokens.push_back(token);
     }
@@ -20,52 +20,47 @@ std::vector<token_t> Lexer::lex() {
     return tokens;
 }
 
-token_t Lexer::get_next_token() {
-    while (this->index < this->source.size()) {
-        if (__IS_WHITESPACE(this->current_char)) {
-            this->skip_whitespace();
+Token Lexer::get_next_token() {
+    while (this->index < this->lines.size()) {
+        this->skip_whitespace();
+
+        if (isdigit(this->current_char)) {
+            return this->get_type_number();
+        }
+        else if (this->current_char == '\"') {
+            return this->get_type_string();
+        }
+        else if (isalnum(this->current_char) || this->current_char == '_') {
+            return this->get_type_id();
         }
 
-       if (__IS_DIGIT(this->current_char)) {
-            return this->get_number();
-        }
-
-        if (this->current_char == '"') {
-            return this->get_string();
-        }
-
-        if (__IS_ALNUM(this->current_char)) {
-            return this->get_ID();
-        }
-
-        return this->get_char();
+        return this->get_single_char();
     }
 
-    return (token_t) {
+    return (Token) {
         .type = TT_EOF,
         .value = "\0"
     };
 }
 
-token_t Lexer::get_ID() {
-    std::string value;
-    while (__IS_ALNUM(this->current_char)) {
-        value += this->current_char;
-
+Token Lexer::get_type_id() {
+    std::string id;
+    while (isalnum(this->current_char) || this->current_char == '_') {
+        id += this->current_char;
         this->next_char();
     }
 
-    return (token_t) {
+    return (Token) {
         .type = TT_ID,
-        .value = value
+        .value = id
     };
 }
 
-token_t Lexer::get_number() {
+Token Lexer::get_type_number() {
     std::string number;
 
     int decimal_count = 0;
-    while (__IS_DIGIT(this->current_char)) {
+    while (isdigit(this->current_char) || this->current_char == '.') {
         if (this->current_char == '.') {
             decimal_count++;
         }
@@ -77,193 +72,134 @@ token_t Lexer::get_number() {
 
     if (decimal_count > 1) {
         printf(
-            "Number can only contain 1 decimal point: '%s'\n",
+            "Only 1 decimal point permitted: '%s'\n",
             number.c_str()
         );
-        exit(0);
+
+        exit(EXIT_FAILURE);
     }
 
-    if (decimal_count == 1) {
-        return (token_t) {
-            .type = TT_FLOAT,
-            .value = number
-        };
-    }
-
-    return (token_t) {
-        .type = TT_INTEGER,
+    return (Token) {
+        .type = decimal_count == 1 ? TT_FLOAT : TT_INT,
         .value = number
     };
 }
 
-token_t Lexer::get_string() {
+Token Lexer::get_type_string() {
     this->next_char();
 
     std::string string;
-    while (this->current_char != '"') {
+    while (this->current_char != '\"') {
         string += this->current_char;
+
         this->next_char();
     }
 
     this->next_char();
 
-    return (token_t) {
+    return (Token) {
         .type = TT_STRING,
         .value = string
     };
 }
 
-token_t Lexer::get_char() {
+Token Lexer::get_single_char() {
     switch (this->current_char) {
-        case '(':
-            return this->advance_with_token(
-                (token_t) {
-                    .type = TT_LEFT_PAREN,
-                    .value = "("
-                }
-            );
+        case '(': {
+            this->next_char();
 
-        case ')':
-            return this->advance_with_token(
-                (token_t) {
-                    .type = TT_RIGHT_PAREN,
-                    .value = ")"
-                }
-            );
+            return (Token) {
+                .type = TT_LEFT_PAREN,
+                .value = "("
+            };
+        }
 
-        case '{':
-            return this->advance_with_token(
-                (token_t) {
-                    .type = TT_LEFT_BRACE,
-                    .value = "{"
-                }
-            );
+        case ')': {
+            this->next_char();
 
-        case '}':
-            this->source[this->index+1] = ';'; // i hate this
+            return (Token) {
+                .type = TT_RIGHT_PAREN,
+                .value = ")"
+            };
+        }
 
-            return this->advance_with_token(
-                (token_t) {
-                    .type = TT_RIGHT_BRACE,
-                    .value = "}"
-                }
-            );
+        case '{': {
+            this->next_char();
 
-        case ';':
-            return this->advance_with_token(
-                (token_t) {
-                    .type = TT_SEMICOLON,
-                    .value = ";"
-                }
-            );
+            return (Token) {
+                .type = TT_LEFT_BRACE,
+                .value = "{"
+            };
+        }
 
-        case ':':
-            if (this->peek(1) == '=') {
+        case '}': {
+            this->next_char();
+
+            return (Token) {
+                .type = TT_RIGHT_BRACE,
+                .value = "}"
+            };
+        }
+
+        case '=': {
+            this->next_char();
+
+            return (Token) {
+                .type = TT_EQUALS_SIGN,
+                .value = "="
+            };
+        }
+
+        case '-': {
+            this->next_char();
+
+            if (this->current_char == '>') {
                 this->next_char();
 
-                return this->advance_with_token(
-                    (token_t) {
-                        .type = TT_ASSIGNMENT_OPERATOR,
-                        .value = ":="
-                    }
-                );
+                return (Token) {
+                    .type = TT_RIGHT_ARROW,
+                    .value = "->"
+                };
             }
 
-            return this->advance_with_token(
-                (token_t) {
-                    .type = TT_COLON,
-                    .value = ":"
-                }
-            );
+            // add hyphen token
+        }
 
-        case ',':
-            return this->advance_with_token(
-                (token_t) {
-                    .type = TT_COMMA,
-                    .value = ","
-                }
-            );
+        case ':': {
+            this->next_char();
 
-        case '=':
-            return this->advance_with_token(
-                (token_t) {
-                    .type = TT_EQUALS_SIGN,
-                    .value = "="
-                }
-            );
+            return (Token) {
+                .type = TT_COLON,
+                .value = ":"
+            };
+        }
 
-        case '+':
-            return this->advance_with_token(
-                (token_t) {
-                    .type = TT_PLUS_SIGN,
-                    .value = "+"
-                }
-            );
+        case ',': {
+            this->next_char();
 
-        case '-':
-            if (this->peek(1) == '>') {
-                this->next_char();
+            return (Token) {
+                .type = TT_COMMA,
+                .value = ","
+            };
+        }
 
-                return this->advance_with_token(
-                    (token_t) {
-                        .type = TT_RIGHT_HYPHEN_ARROW,
-                        .value = "->"
-                    }
-                );
-            }
+        case ';': {
+            this->next_char();
 
-            return this->advance_with_token(
-                (token_t) {
-                    .type = TT_HYPHEN,
-                    .value = "-"
-                }
-            );
-
-        case '*':
-            return this->advance_with_token(
-                (token_t) {
-                    .type = TT_ASTERICK,
-                    .value = "*"
-                }
-            );
-
-        case '/':
-            return this->advance_with_token(
-                (token_t) {
-                    .type = TT_FORWARD_SLASH,
-                    .value = "/"
-                }
-            );
-
-        default:
-            printf(
-                "Unknown character: '%c'\n",
-                this->current_char
-            );
-            exit(0);
+            return (Token) {
+                .type = TT_EOL,
+                .value = ";"
+            };
+        }
     }
 }
 
-token_t Lexer::advance_with_token(token_t token) {
-    this->next_char();
-
-    return token;
-}
-
 void Lexer::next_char() {
-    this->current_char = this->source[
-        ++this->index
-    ];
-}
-
-char Lexer::peek(size_t offset) {
-    return this->source[
-        this->index + offset
-    ];
+    this->current_char = this->lines[++this->index];
 }
 
 void Lexer::skip_whitespace() {
-    while (__IS_WHITESPACE(this->current_char)) {
+    while (isspace(this->current_char)) {
         this->next_char();
     }
 }

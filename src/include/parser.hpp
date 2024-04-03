@@ -1,41 +1,44 @@
-#ifndef _PARSER_HPP
-#define _PARSER_HPP
+#ifndef __PARSER_HPP
+#define __PARSER_HPP
 
 #include <vector>
+#include <string>
+#include <any>
 
 #include "token.hpp"
-#include "ast.hpp"
+
+#include "nodes/master_node.hpp"
+#include "nodes/variable_node.hpp"
+#include "nodes/if_statement_node.hpp"
+#include "nodes/function_node.hpp"
+#include "nodes/node.hpp"
 
 class Parser {
     public:
-        Parser(std::vector<token_t> tokens);
-        Parser() = default;
+        Parser(std::vector<Token> tokens);
 
-        ast_t parse();
+        MasterNode parse();
 
     private:
-        ast_t parse_statements();
-        ast_t parse_statement();
-        ast_t parse_expression();
-        std::vector<ast_t> parse_block();
+        NODE parse_next_token();
+        NODE parse_id();
+        std::vector<NODE> parse_block();
+        GenericNode parse_expression(enum TokenTypes termination_token);
 
-        ast_t parse_ID();
-        ast_t parse_integer();
-        ast_t parse_float();
-        ast_t parse_string();
-        ast_t parse_variable_definition();
-        ast_t parse_variable_redefinition();
-        ast_t parse_variable_usage();
-        ast_t parse_function_definition();
-        ast_t parse_function_call();
+        NODE parse_variable_definition();
+        NODE parse_variable_modification();
+        NODE parse_if_statement();
+        NODE parse_function_call();
+        NODE parse_function_definition();
 
-        void eat(enum TokenType token_type);
-        token_t peek(size_t offset);
+        void eat(enum TokenTypes expected_type);
+        void next_token();
+        Token peek(int offset);
 
-        std::vector<token_t> tokens;
+        std::vector<Token> tokens;
 
-        token_t current_token;
         size_t index;
+        Token current_token;
 };
 
 #endif

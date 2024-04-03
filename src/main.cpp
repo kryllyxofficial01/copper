@@ -5,29 +5,35 @@
 #include "include/lexer.hpp"
 #include "include/parser.hpp"
 #include "include/token.hpp"
-#include "include/ast.hpp"
-
-using namespace std;
+#include "include/utils.hpp"
+#include "include/nodes/node.hpp"
+#include "include/nodes/master_node.hpp"
 
 int main(int argc, const char* argv[]) {
     if (argc < 2) {
-        printf("Syntax: ./build/main <filepath>\n");
-        exit(1);
+        std::cout << "Syntax: " + std::string(argv[0]) + " <name of file>" << std::endl;
+        exit(EXIT_FAILURE);
     }
 
-    string filepath = argv[1];
+    std::string filepath = argv[1];
 
-    ifstream reader(filepath);
+    std::ifstream file(filepath);
 
-    string contents;
-    string line;
-    while (getline(reader, line)) {
-        contents += line;
+    std::string line;
+    std::string lines;
+    while (getline(file, line)) {
+        line = trim(line, __WHITESPACE__);
+
+        if (line != "" && line.substr(0, 2) != "//") {
+            lines += line;
+        }
     }
 
-    Lexer lexer(contents);
-    vector<token_t> tokens = lexer.lex();
+    Lexer lexer(lines);
+    std::vector<Token> tokens = lexer.lex();
 
     Parser parser(tokens);
-    ast_t AST = parser.parse();
+    MasterNode ast = parser.parse();
+
+    return 0;
 }

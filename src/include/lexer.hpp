@@ -1,35 +1,32 @@
-#ifndef _LEXER_HPP
-#define _LEXER_HPP
+#ifndef __LEXER_HPP
+#define __LEXER_HPP
 
+#include <stdio.h>
 #include <string>
 #include <vector>
 
 #include "token.hpp"
-#include "utils.hpp"
 
 class Lexer {
     public:
-        Lexer(std::string source);
-        Lexer() = default;
+        Lexer(std::string lines);
 
-        std::vector<token_t> lex();
+        std::vector<Token> lex();
 
     private:
-        token_t get_next_token();
-        token_t get_ID();
-        token_t get_number();
-        token_t get_string();
-        token_t get_char();
+        Token get_next_token();
+        Token get_type_id();
+        Token get_type_number();
+        Token get_type_string();
+        Token get_single_char();
 
-        token_t advance_with_token(token_t token);
         void next_char();
-        char peek(size_t offset);
         void skip_whitespace();
 
-        std::string source;
+        std::string lines;
 
-        char current_char;
         size_t index;
+        char current_char;
 };
 
 #endif
