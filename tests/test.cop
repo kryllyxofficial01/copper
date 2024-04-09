@@ -1,2 +1,2 @@
 var test: string = "tset";
-modify test = "stet";
+$test = "tset";

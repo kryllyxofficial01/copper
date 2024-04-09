@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "token.hpp"
+#include "utils.hpp"
 
 class Lexer {
     public:

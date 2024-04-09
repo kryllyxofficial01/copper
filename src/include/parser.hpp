@@ -26,7 +26,7 @@ class Parser {
         GenericNode parse_expression(enum TokenTypes termination_token);
 
         NODE parse_variable_definition();
-        NODE parse_variable_modification();
+        NODE parse_variable_usage();
         NODE parse_if_statement();
         NODE parse_function_call();
         NODE parse_function_definition();

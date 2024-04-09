@@ -26,14 +26,14 @@ NODE Parser::parse_next_token() {
     if (this->current_token.type == TT_ID) {
         return this->parse_id();
     }
+    else if (this->current_token.type == TT_DOLLAR_SIGN) {
+        return this->parse_variable_usage();
+    }
 }
 
 NODE Parser::parse_id() {
     if (this->current_token.value == "var") {
         return this->parse_variable_definition();
-    }
-    else if (this->current_token.value == "modify") { // not the greatest word choice, but idk
-        return this->parse_variable_modification();
     }
     else if (this->current_token.value == "if") {
         return this->parse_if_statement();
@@ -99,21 +99,34 @@ NODE Parser::parse_variable_definition() {
     );
 }
 
-NODE Parser::parse_variable_modification() {
-    VariableModificationNode variable_modification_node;
+NODE Parser::parse_variable_usage() {
+    this->eat(TT_DOLLAR_SIGN);
 
-    this->eat(TT_ID); // modify
-
-    variable_modification_node.name = this->current_token.value;
+    std::string variable_name = this->current_token.value;
     this->eat(TT_ID); // variable name
 
-    this->eat(TT_EQUALS_SIGN);
+    if (this->current_token.type == TT_EQUALS_SIGN) {
+        VariableRedefinitionNode variable_redefinition_node;
 
-    variable_modification_node.new_value = this->parse_expression(TT_EOL);
+        variable_redefinition_node.name = variable_name;
+
+        this->eat(TT_EQUALS_SIGN);
+
+        variable_redefinition_node.value = this->parse_expression(TT_EOL);
+
+        return std::make_pair(
+            VARIABLE_REDEFINITION_NODE,
+            std::make_any<VariableRedefinitionNode>(variable_redefinition_node)
+        );
+    }
+
+    VariableCallNode variable_call_node;
+
+    variable_call_node.name = variable_name;
 
     return std::make_pair(
-        VARIABLE_MODIFICATION_NODE,
-        std::make_any<VariableModificationNode>(variable_modification_node)
+        VARIABLE_CALL_NODE,
+        std::make_any<VariableCallNode>(variable_call_node)
     );
 }
 

@@ -13,6 +13,7 @@ enum TokenTypes {
 
     TT_EQUALS_SIGN,
     TT_RIGHT_ARROW, // ->
+    TT_DOLLAR_SIGN,
 
     TT_COLON, TT_COMMA,
 

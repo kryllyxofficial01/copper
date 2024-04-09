@@ -6,3 +6,10 @@ std::string trim(std::string string, std::string whitespace) {
 
     return string;
 }
+
+Token make_token(enum TokenTypes type, std::string value) {
+    return (Token) {
+        .type = type,
+        .value = value
+    };
+}

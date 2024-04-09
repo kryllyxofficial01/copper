@@ -37,10 +37,7 @@ Token Lexer::get_next_token() {
         return this->get_single_char();
     }
 
-    return (Token) {
-        .type = TT_EOF,
-        .value = "\0"
-    };
+    return make_token(TT_EOF, "\0");
 }
 
 Token Lexer::get_type_id() {
@@ -50,10 +47,7 @@ Token Lexer::get_type_id() {
         this->next_char();
     }
 
-    return (Token) {
-        .type = TT_ID,
-        .value = id
-    };
+    return make_token(TT_ID, id);
 }
 
 Token Lexer::get_type_number() {
@@ -79,10 +73,10 @@ Token Lexer::get_type_number() {
         exit(EXIT_FAILURE);
     }
 
-    return (Token) {
-        .type = decimal_count == 1 ? TT_FLOAT : TT_INT,
-        .value = number
-    };
+    return make_token(
+        decimal_count == 1 ? TT_FLOAT : TT_INT,
+        number
+    );
 }
 
 Token Lexer::get_type_string() {
@@ -97,57 +91,34 @@ Token Lexer::get_type_string() {
 
     this->next_char();
 
-    return (Token) {
-        .type = TT_STRING,
-        .value = string
-    };
+    return make_token(TT_STRING, string);
 }
 
 Token Lexer::get_single_char() {
     switch (this->current_char) {
         case '(': {
             this->next_char();
-
-            return (Token) {
-                .type = TT_LEFT_PAREN,
-                .value = "("
-            };
+            return make_token(TT_LEFT_PAREN, "(");
         }
 
         case ')': {
             this->next_char();
-
-            return (Token) {
-                .type = TT_RIGHT_PAREN,
-                .value = ")"
-            };
+            return make_token(TT_RIGHT_PAREN, ")");
         }
 
         case '{': {
             this->next_char();
-
-            return (Token) {
-                .type = TT_LEFT_BRACE,
-                .value = "{"
-            };
+            return make_token(TT_LEFT_BRACE, "{");
         }
 
         case '}': {
             this->next_char();
-
-            return (Token) {
-                .type = TT_RIGHT_BRACE,
-                .value = "}"
-            };
+            return make_token(TT_RIGHT_BRACE, "}");
         }
 
         case '=': {
             this->next_char();
-
-            return (Token) {
-                .type = TT_EQUALS_SIGN,
-                .value = "="
-            };
+            return make_token(TT_EQUALS_SIGN, "=");
         }
 
         case '-': {
@@ -155,41 +126,30 @@ Token Lexer::get_single_char() {
 
             if (this->current_char == '>') {
                 this->next_char();
-
-                return (Token) {
-                    .type = TT_RIGHT_ARROW,
-                    .value = "->"
-                };
+                return make_token(TT_RIGHT_ARROW, "->");
             }
 
             // add hyphen token
         }
 
+        case '$': {
+            this->next_char();
+            return make_token(TT_DOLLAR_SIGN, "$");
+        }
+
         case ':': {
             this->next_char();
-
-            return (Token) {
-                .type = TT_COLON,
-                .value = ":"
-            };
+            return make_token(TT_COLON, ":");
         }
 
         case ',': {
             this->next_char();
-
-            return (Token) {
-                .type = TT_COMMA,
-                .value = ","
-            };
+            return make_token(TT_COMMA, ",");
         }
 
         case ';': {
             this->next_char();
-
-            return (Token) {
-                .type = TT_EOL,
-                .value = ";"
-            };
+            return make_token(TT_EOL, ";");
         }
     }
 }
