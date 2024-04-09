@@ -243,7 +243,7 @@ void Parser::eat(enum TokenTypes expected_type) {
             this->current_token.value.c_str()
         );
 
-        exit(1);
+        exit(EXIT_FAILURE);
     }
 
     this->next_token();
