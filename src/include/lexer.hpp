@@ -22,6 +22,7 @@ class Lexer {
         Token get_single_char();
 
         void next_char();
+        Token advance_with_token(enum TokenTypes type, std::string value);
         void skip_whitespace();
 
         std::string lines;

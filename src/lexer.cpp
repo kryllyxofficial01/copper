@@ -66,7 +66,7 @@ Token Lexer::get_type_number() {
 
     if (decimal_count > 1) {
         printf(
-            "Only 1 decimal point permitted: '%s'\n",
+            "Lexer: Error: Only 1 decimal point permitted: '%s'\n",
             number.c_str()
         );
 
@@ -89,35 +89,23 @@ Token Lexer::get_type_string() {
         this->next_char();
     }
 
-    this->next_char();
-
-    return make_token(TT_STRING, string);
+    return this->advance_with_token(TT_STRING, string);
 }
 
 Token Lexer::get_single_char() {
     switch (this->current_char) {
-        case '(': {
-            this->next_char();
-            return make_token(TT_LEFT_PAREN, "(");
-        }
-
-        case ')': {
-            this->next_char();
-            return make_token(TT_RIGHT_PAREN, ")");
-        }
-
-        case '{': {
-            this->next_char();
-            return make_token(TT_LEFT_BRACE, "{");
-        }
-
-        case '}': {
-            this->next_char();
-            return make_token(TT_RIGHT_BRACE, "}");
-        }
+        case '(': return this->advance_with_token(TT_LEFT_PAREN, "(");
+        case ')': return this->advance_with_token(TT_RIGHT_PAREN, ")");
+        case '{': return this->advance_with_token(TT_LEFT_BRACE, "{");
+        case '}': return this->advance_with_token(TT_RIGHT_BRACE, "}");
 
         case '=': {
             this->next_char();
+
+            if (this->current_char == '=') {
+                return this->advance_with_token(TT_DOUBLE_EQUALS_SIGN, "==");
+            }
+
             return make_token(TT_EQUALS_SIGN, "=");
         }
 
@@ -125,37 +113,51 @@ Token Lexer::get_single_char() {
             this->next_char();
 
             if (this->current_char == '>') {
-                this->next_char();
-                return make_token(TT_RIGHT_ARROW, "->");
+                return this->advance_with_token(TT_RIGHT_ARROW, "->");
             }
 
-            // add hyphen token
+            return make_token(TT_HYPHEN, "-");
         }
 
-        case '$': {
+        case '$': return this->advance_with_token(TT_DOLLAR_SIGN, "$");
+        case '+': return this->advance_with_token(TT_PLUS_SIGN, "+");
+        case '*': return this->advance_with_token(TT_ASTERICK, "*");
+        case '/': return this->advance_with_token(TT_FORWARD_SLASH, "/");
+
+        case '<': {
             this->next_char();
-            return make_token(TT_DOLLAR_SIGN, "$");
+
+            if (this->current_char == '=') {
+                return this->advance_with_token(TT_LT_OR_ET_SIGN, "<=");
+            }
+
+            return make_token(TT_LESS_THAN_SYMBOL, "<");
         }
 
-        case ':': {
+        case '>': {
             this->next_char();
-            return make_token(TT_COLON, ":");
+
+            if (this->current_char == '=') {
+                return this->advance_with_token(TT_GT_OR_ET_SIGN, ">=");
+            }
+
+            return make_token(TT_GREATER_THAN_SYMBOL, ">");
         }
 
-        case ',': {
-            this->next_char();
-            return make_token(TT_COMMA, ",");
-        }
-
-        case ';': {
-            this->next_char();
-            return make_token(TT_EOL, ";");
-        }
+        case ':': return this->advance_with_token(TT_COLON, ":");
+        case ',': return this->advance_with_token(TT_COMMA, ",");
+        case ';': return this->advance_with_token(TT_SEMICOLON, ";");
     }
 }
 
 void Lexer::next_char() {
     this->current_char = this->lines[++this->index];
+}
+
+Token Lexer::advance_with_token(enum TokenTypes type, std::string value) {
+    this->next_char();
+
+    return make_token(type, value);
 }
 
 void Lexer::skip_whitespace() {
