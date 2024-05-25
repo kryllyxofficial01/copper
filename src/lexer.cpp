@@ -37,7 +37,7 @@ Token Lexer::get_next_token() {
         return this->get_single_char();
     }
 
-    return make_token(TT_EOF, "\0");
+    return __make_token(TT_EOF, "\0");
 }
 
 Token Lexer::get_type_id() {
@@ -47,7 +47,7 @@ Token Lexer::get_type_id() {
         this->next_char();
     }
 
-    return make_token(TT_ID, id);
+    return __make_token(TT_ID, id);
 }
 
 Token Lexer::get_type_number() {
@@ -73,7 +73,7 @@ Token Lexer::get_type_number() {
         exit(EXIT_FAILURE);
     }
 
-    return make_token(
+    return __make_token(
         decimal_count == 1 ? TT_FLOAT : TT_INT,
         number
     );
@@ -106,7 +106,7 @@ Token Lexer::get_single_char() {
                 return this->advance_with_token(TT_DOUBLE_EQUALS_SIGN, "==");
             }
 
-            return make_token(TT_EQUALS_SIGN, "=");
+            return __make_token(TT_EQUALS_SIGN, "=");
         }
 
         case '-': {
@@ -116,7 +116,7 @@ Token Lexer::get_single_char() {
                 return this->advance_with_token(TT_RIGHT_ARROW, "->");
             }
 
-            return make_token(TT_HYPHEN, "-");
+            return __make_token(TT_HYPHEN, "-");
         }
 
         case '$': return this->advance_with_token(TT_DOLLAR_SIGN, "$");
@@ -131,7 +131,7 @@ Token Lexer::get_single_char() {
                 return this->advance_with_token(TT_LT_OR_ET_SIGN, "<=");
             }
 
-            return make_token(TT_LESS_THAN_SYMBOL, "<");
+            return __make_token(TT_LESS_THAN_SYMBOL, "<");
         }
 
         case '>': {
@@ -141,7 +141,7 @@ Token Lexer::get_single_char() {
                 return this->advance_with_token(TT_GT_OR_ET_SIGN, ">=");
             }
 
-            return make_token(TT_GREATER_THAN_SYMBOL, ">");
+            return __make_token(TT_GREATER_THAN_SYMBOL, ">");
         }
 
         case ':': return this->advance_with_token(TT_COLON, ":");
@@ -157,7 +157,7 @@ void Lexer::next_char() {
 Token Lexer::advance_with_token(enum TokenTypes type, std::string value) {
     this->next_char();
 
-    return make_token(type, value);
+    return __make_token(type, value);
 }
 
 void Lexer::skip_whitespace() {

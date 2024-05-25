@@ -6,11 +6,16 @@
 #include <memory>
 
 #include "token.hpp"
+#include "nodes/node.hpp"
 
 #define __WHITESPACE__ " \n\t\r\v\f"
 
-std::string trim(std::string string, std::string whitespace);
+#define __make_token(t, v) (Token) { \
+        .type = t, \
+        .value = v \
+    }
+#define __make_node(nt, t, n) std::make_pair(nt, std::make_any<t>(n));
 
-Token make_token(enum TokenTypes type, std::string value);
+std::string trim(std::string string, std::string whitespace);
 
 #endif

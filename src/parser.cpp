@@ -96,9 +96,10 @@ NODE Parser::parse_variable_definition() {
 
     variable_definition_node.value = this->parse_expression(TT_SEMICOLON);
 
-    return std::make_pair(
+    return __make_node(
         VARIABLE_DEFINITION_NODE,
-        std::make_any<VariableDefinitionNode>(variable_definition_node)
+        VariableDefinitionNode,
+        variable_definition_node
     );
 }
 
@@ -117,9 +118,10 @@ NODE Parser::parse_variable_usage() {
 
         variable_redefinition_node.value = this->parse_expression(TT_SEMICOLON);
 
-        return std::make_pair(
+        return __make_node(
             VARIABLE_REDEFINITION_NODE,
-            std::make_any<VariableRedefinitionNode>(variable_redefinition_node)
+            VariableRedefinitionNode,
+            variable_redefinition_node
         );
     }
 
@@ -127,9 +129,10 @@ NODE Parser::parse_variable_usage() {
 
     variable_call_node.name = variable_name;
 
-    return std::make_pair(
+    return __make_node(
         VARIABLE_CALL_NODE,
-        std::make_any<VariableCallNode>(variable_call_node)
+        VariableCallNode,
+        variable_call_node
     );
 }
 
@@ -156,15 +159,17 @@ NODE Parser::parse_if_statement() {
 
         if_else_statement_node.else_body = this->parse_block();
 
-        return std::make_pair(
+        return __make_node(
             IF_ELSE_STATEMENT_NODE,
-            std::make_any<IfElseStatementNode>(if_else_statement_node)
+            IfElseStatementNode,
+            if_else_statement_node
         );
     }
 
-    return std::make_pair(
+    return __make_node(
         IF_STATEMENT_NODE,
-        std::make_any<IfStatementNode>(if_statement_node)
+        IfStatementNode,
+        if_statement_node
     );
 }
 
@@ -191,9 +196,10 @@ NODE Parser::parse_for_loop() {
 
     for_loop_node.body = this->parse_block();
 
-    return std::make_pair(
+    return __make_node(
         FOR_LOOP_NODE,
-        std::make_any<ForLoopNode>(for_loop_node)
+        ForLoopNode,
+        for_loop_node
     );
 }
 
@@ -221,9 +227,10 @@ NODE Parser::parse_function_call() {
 
     this->eat(TT_RIGHT_PAREN);
 
-    return std::make_pair(
+    return __make_node(
         FUNCTION_CALL_NODE,
-        std::make_any<FunctionCallNode>(function_call_node)
+        FunctionCallNode,
+        function_call_node
     );
 }
 
@@ -275,16 +282,17 @@ NODE Parser::parse_function_definition() {
 
     this->eat(TT_RIGHT_BRACE);
 
-    return std::make_pair(
+    return __make_node(
         FUNCTION_DEFINITION_NODE,
-        std::make_any<FunctionDefinitionNode>(function_definition_node)
+        FunctionDefinitionNode,
+        function_definition_node
     );
 }
 
 void Parser::eat(enum TokenTypes expected_type) {
     if (this->current_token.type != expected_type) {
         printf(
-            "Parser: Error: Unexpected token: '%s'\n", // verbose error reports? nahhhhh
+            "Parser: Error: Unexpected token: '%s'\n",
             this->current_token.value.c_str()
         );
 

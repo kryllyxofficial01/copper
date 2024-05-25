@@ -6,6 +6,7 @@
 #include <any>
 
 #include "token.hpp"
+#include "utils.hpp"
 
 #include "nodes/master_node.hpp"
 #include "nodes/variable_node.hpp"
