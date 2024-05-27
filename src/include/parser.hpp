@@ -12,7 +12,6 @@
 
 #include "nodes/master_node.hpp"
 #include "nodes/type_node.hpp"
-#include "nodes/operator_node.hpp"
 #include "nodes/variable_node.hpp"
 #include "nodes/if_statement_node.hpp"
 #include "nodes/loop_node.hpp"
@@ -30,6 +29,7 @@ class Parser {
         NODE parse_id();
         std::vector<NODE> parse_block();
         GenericNode parse_expression(enum TokenTypes termination_token);
+        GenericNode parse_expression(std::vector<enum TokenTypes> termination_tokens);
 
         NODE parse_variable_definition();
         NODE parse_variable_usage();
@@ -38,7 +38,7 @@ class Parser {
         NODE parse_function_call();
         NODE parse_function_definition();
 
-        std::deque<std::pair<bool, std::any>> to_rpn(std::deque<Token>& tokens);
+        RPN to_rpn(std::deque<Token>& tokens);
 
         void eat(enum TokenTypes expected_type);
         void next_token();

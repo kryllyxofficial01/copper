@@ -5,9 +5,13 @@
 #include <vector>
 #include <memory>
 #include <algorithm>
+#include <queue>
+#include <any>
 
 #include "token.hpp"
 #include "nodes/node.hpp"
+
+#define RPN std::deque<std::pair<bool, std::any>>
 
 #define __WHITESPACE__ " \n\t\r\v\f"
 
@@ -17,7 +21,7 @@
     }
 #define __make_node(nt, t, n) std::make_pair(nt, std::make_any<t>(n));
 
-// #define __is_in_array(e, a) (std::find(std::begin(a), std::end(a), e) != std::end(a))
+#define __is_in_vector(e, a) (std::find(a.begin(), a.end(), e) != a.end())
 
 std::string trim(std::string string, std::string whitespace);
 

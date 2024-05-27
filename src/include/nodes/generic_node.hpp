@@ -3,9 +3,11 @@
 
 #include <vector>
 
+#include "../utils.hpp"
+
 class GenericNode {
     public:
-        std::vector<Token> value;
+        RPN expression;
 };
 
 #endif

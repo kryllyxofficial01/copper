@@ -77,17 +77,22 @@ GenericNode Parser::parse_expression(enum TokenTypes termination_token) {
         this->next_token();
     }
 
-    for (Token token: tokens) {
-        printf("%s", token.value.c_str());
-    }
-    printf("\n");
-
     auto rpn = this->to_rpn(tokens);
 
-    for (auto token: rpn) {
-        printf("%s ", std::any_cast<Token>(token.second).value.c_str());
+    return node;
+}
+
+GenericNode Parser::parse_expression(std::vector<enum TokenTypes> termination_tokens) {
+    GenericNode node;
+
+    std::deque<Token> tokens;
+    while (!__is_in_vector(this->current_token.type, termination_tokens)) {
+        tokens.push_back(this->current_token);
+
+        this->next_token();
     }
-    printf("\n");
+
+    auto rpn = this->to_rpn(tokens);
 
     return node;
 }
@@ -224,14 +229,10 @@ NODE Parser::parse_function_call() {
 
     this->eat(TT_LEFT_PAREN);
 
-    GenericNode argument;
     while (this->current_token.type != TT_RIGHT_PAREN) {
-        argument.value.clear();
-
-        while (this->current_token.type != TT_COMMA && this->current_token.type != TT_RIGHT_PAREN) {
-            argument.value.push_back(this->current_token);
-            this->next_token();
-        }
+        GenericNode argument = parse_expression(
+            std::vector<enum TokenTypes>{TT_COMMA, TT_RIGHT_PAREN}
+        );
 
         function_call_node.arguments.push_back(argument);
 
@@ -302,8 +303,8 @@ NODE Parser::parse_function_definition() {
     );
 }
 
-std::deque<std::pair<bool, std::any>> Parser::to_rpn(std::deque<Token>& tokens) {
-    std::deque<std::pair<bool, std::any>> queue; // true if node, false if token
+RPN Parser::to_rpn(std::deque<Token>& tokens) {
+    RPN queue; // true if node, false if token
     std::vector<Token> stack;
 
     for (Token token: tokens) {
