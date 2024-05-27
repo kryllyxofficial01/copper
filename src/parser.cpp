@@ -304,7 +304,7 @@ NODE Parser::parse_function_definition() {
 }
 
 RPN Parser::to_rpn(std::deque<Token>& tokens) {
-    RPN queue; // true if node, false if token
+    RPN queue;
     std::vector<Token> stack;
 
     for (Token token: tokens) {
