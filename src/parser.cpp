@@ -77,7 +77,7 @@ GenericNode Parser::parse_expression(enum TokenTypes termination_token) {
         this->next_token();
     }
 
-    auto rpn = this->to_rpn(tokens);
+    node.expression = this->to_rpn(tokens);
 
     return node;
 }
@@ -92,7 +92,7 @@ GenericNode Parser::parse_expression(std::vector<enum TokenTypes> termination_to
         this->next_token();
     }
 
-    auto rpn = this->to_rpn(tokens);
+    node.expression = this->to_rpn(tokens);
 
     return node;
 }
@@ -307,16 +307,46 @@ RPN Parser::to_rpn(std::deque<Token>& tokens) {
     RPN queue;
     std::vector<Token> stack;
 
-    for (Token token: tokens) {
-        switch (token.type) {
-            case TokenTypes::TT_INTEGER:
+    for (int i = 0; i < tokens.size(); i++) {
+        switch (tokens[i].type) {
+            case TokenTypes::TT_INTEGER: {
+                IntegerNode integer_node(atoi(tokens[i].value.c_str()));
+
+                NODE node = __make_node(INTEGER_NODE, IntegerNode, integer_node);
+
                 queue.push_back(
-                    std::make_pair(false, std::make_any<Token>(token))
+                    std::make_pair(true, std::make_any<NODE>(node))
                 );
+
                 break;
+            }
+
+            case TokenTypes::TT_FLOAT: {
+                FloatNode float_node(atof(tokens[i].value.c_str()));
+
+                NODE node = __make_node(FLOAT_NODE, FloatNode, float_node);
+
+                queue.push_back(
+                    std::make_pair(true, std::make_any<NODE>(node))
+                );
+
+                break;
+            }
+
+            case TokenTypes::TT_STRING: {
+                StringNode string_node(tokens[i].value);
+
+                NODE node = __make_node(STRING_NODE, StringNode, string_node);
+
+                queue.push_back(
+                    std::make_pair(true, std::make_any<NODE>(node))
+                );
+
+                break;
+            }
 
             case TokenTypes::TT_LEFT_PAREN:
-                stack.push_back(token);
+                stack.push_back(tokens[i]);
                 break;
 
             case TokenTypes::TT_RIGHT_PAREN: {
@@ -342,7 +372,7 @@ RPN Parser::to_rpn(std::deque<Token>& tokens) {
             }
 
             default: { // operator
-                Token operator1 = token;
+                Token operator1 = tokens[i];
                 bool operator1_associativity = get_operator_right_associativity(operator1.type);
                 int operator1_precedence = get_operator_precedence(operator1.type);
 
