@@ -74,7 +74,7 @@ Token Lexer::get_type_number() {
     }
 
     return __make_token(
-        decimal_count == 1 ? TT_FLOAT : TT_INT,
+        decimal_count == 1 ? TT_FLOAT : TT_INTEGER,
         number
     );
 }
@@ -123,6 +123,7 @@ Token Lexer::get_single_char() {
         case '+': return this->advance_with_token(TT_PLUS_SIGN, "+");
         case '*': return this->advance_with_token(TT_ASTERICK, "*");
         case '/': return this->advance_with_token(TT_FORWARD_SLASH, "/");
+        case '^': return this->advance_with_token(TT_CARET, "^");
 
         case '<': {
             this->next_char();
@@ -131,7 +132,7 @@ Token Lexer::get_single_char() {
                 return this->advance_with_token(TT_LT_OR_ET_SIGN, "<=");
             }
 
-            return __make_token(TT_LESS_THAN_SYMBOL, "<");
+            return __make_token(TT_LEFT_CHEVRON, "<");
         }
 
         case '>': {
@@ -141,7 +142,7 @@ Token Lexer::get_single_char() {
                 return this->advance_with_token(TT_GT_OR_ET_SIGN, ">=");
             }
 
-            return __make_token(TT_GREATER_THAN_SYMBOL, ">");
+            return __make_token(TT_RIGHT_CHEVRON, ">");
         }
 
         case ':': return this->advance_with_token(TT_COLON, ":");

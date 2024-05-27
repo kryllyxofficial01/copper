@@ -4,11 +4,15 @@
 #include <vector>
 #include <string>
 #include <any>
+#include <queue>
+#include <stack>
 
 #include "token.hpp"
 #include "utils.hpp"
 
 #include "nodes/master_node.hpp"
+#include "nodes/type_node.hpp"
+#include "nodes/operator_node.hpp"
 #include "nodes/variable_node.hpp"
 #include "nodes/if_statement_node.hpp"
 #include "nodes/loop_node.hpp"
@@ -33,6 +37,8 @@ class Parser {
         NODE parse_for_loop();
         NODE parse_function_call();
         NODE parse_function_definition();
+
+        std::deque<std::pair<bool, std::any>> to_rpn(std::deque<Token>& tokens);
 
         void eat(enum TokenTypes expected_type);
         void next_token();

@@ -70,11 +70,24 @@ std::vector<NODE> Parser::parse_block() {
 GenericNode Parser::parse_expression(enum TokenTypes termination_token) {
     GenericNode node;
 
+    std::deque<Token> tokens;
     while (this->current_token.type != termination_token) {
-        node.value.push_back(this->current_token);
+        tokens.push_back(this->current_token);
 
         this->next_token();
     }
+
+    for (Token token: tokens) {
+        printf("%s", token.value.c_str());
+    }
+    printf("\n");
+
+    auto rpn = this->to_rpn(tokens);
+
+    for (auto token: rpn) {
+        printf("%s ", std::any_cast<Token>(token.second).value.c_str());
+    }
+    printf("\n");
 
     return node;
 }
@@ -287,6 +300,90 @@ NODE Parser::parse_function_definition() {
         FunctionDefinitionNode,
         function_definition_node
     );
+}
+
+std::deque<std::pair<bool, std::any>> Parser::to_rpn(std::deque<Token>& tokens) {
+    std::deque<std::pair<bool, std::any>> queue; // true if node, false if token
+    std::vector<Token> stack;
+
+    for (Token token: tokens) {
+        switch (token.type) {
+            case TokenTypes::TT_INTEGER:
+                queue.push_back(
+                    std::make_pair(false, std::make_any<Token>(token))
+                );
+                break;
+
+            case TokenTypes::TT_LEFT_PAREN:
+                stack.push_back(token);
+                break;
+
+            case TokenTypes::TT_RIGHT_PAREN: {
+                bool match = false;
+
+                while (!stack.empty() && stack.back().type != TokenTypes::TT_LEFT_PAREN) {
+                    queue.push_back(
+                        std::make_pair(false, std::make_any<Token>(stack.back()))
+                    );
+                    stack.pop_back();
+
+                    match = true;
+                }
+
+                if (!match && stack.empty()) {
+                    printf("Parser: Error: Mismatched parentheses\n");
+                    exit(EXIT_FAILURE);
+                }
+
+                stack.pop_back();
+
+                break;
+            }
+
+            default: { // operator
+                Token operator1 = token;
+                bool operator1_associativity = get_operator_right_associativity(operator1.type);
+                int operator1_precedence = get_operator_precedence(operator1.type);
+
+                while (!stack.empty()) {
+                    Token operator2 = stack.back();
+                    int operator2_precedence = get_operator_precedence(operator2.type);
+
+                    if (
+                        (!operator1_associativity && operator1_precedence <= operator2_precedence) ||
+                        (operator1_associativity && operator1_precedence < operator2_precedence)
+                    ) {
+                        queue.push_back(
+                            std::make_pair(false, std::make_any<Token>(operator2))
+                        );
+                        stack.pop_back();
+
+                        continue;
+                    }
+
+                    break;
+                }
+
+                stack.push_back(operator1);
+
+                break;
+            }
+        }
+    }
+
+    while (!stack.empty()) {
+        if (stack.back().type == TokenTypes::TT_LEFT_PAREN) {
+            printf("Parser: Error: Mismatched parentheses\n");
+            exit(EXIT_FAILURE);
+        }
+
+        queue.push_back(std::move(
+            std::make_pair(false, std::make_any<Token>(stack.back()))
+        ));
+        stack.pop_back();
+    }
+
+    return queue;
 }
 
 void Parser::eat(enum TokenTypes expected_type) {
