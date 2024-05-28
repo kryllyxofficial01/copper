@@ -11,7 +11,10 @@
 #include "token.hpp"
 #include "nodes/node.hpp"
 
-#define RPN std::deque<std::pair<bool, std::any>>
+#define RPN_BUFFER std::deque<std::pair<bool, std::any>>
+
+#define RPN_TOKEN false
+#define RPN_NODE true
 
 #define __WHITESPACE__ " \n\t\r\v\f"
 
@@ -21,7 +24,7 @@
     }
 #define __make_node(nt, t, n) std::make_pair(nt, std::make_any<t>(n));
 
-#define __is_in_vector(e, a) (std::find(a.begin(), a.end(), e) != a.end())
+#define __is_in_vector(e, v) (std::find(v.begin(), v.end(), e) != v.end())
 
 std::string trim(std::string string, std::string whitespace);
 

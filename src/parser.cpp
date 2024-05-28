@@ -70,14 +70,86 @@ std::vector<NODE> Parser::parse_block() {
 GenericNode Parser::parse_expression(enum TokenTypes termination_token) {
     GenericNode node;
 
-    std::deque<Token> tokens;
+    RPN_BUFFER buffer;
     while (this->current_token.type != termination_token) {
-        tokens.push_back(this->current_token);
+        switch (this->current_token.type) {
+            case TokenTypes::TT_ID: {
+                if (this->peek(1).type == TT_LEFT_PAREN) {
+                    buffer.push_back(
+                        std::make_pair(
+                            RPN_NODE,
+                            std::make_any<NODE>(this->parse_function_call())
+                        )
+                    );
+
+                    this->index--;
+                }
+
+                break;
+            }
+
+            case TokenTypes::TT_INTEGER: {
+                IntegerNode integer_node(atoi(this->current_token.value.c_str()));
+
+                NODE node = __make_node(INTEGER_NODE, IntegerNode, integer_node);
+
+                buffer.push_back(
+                    std::make_pair(RPN_NODE, std::make_any<NODE>(node))
+                );
+
+                break;
+            }
+
+            case TokenTypes::TT_FLOAT: {
+                FloatNode float_node(atof(this->current_token.value.c_str()));
+
+                NODE node = __make_node(FLOAT_NODE, FloatNode, float_node);
+
+                buffer.push_back(
+                    std::make_pair(RPN_NODE, std::make_any<NODE>(node))
+                );
+
+                break;
+            }
+
+            case TokenTypes::TT_STRING: {
+                StringNode string_node(this->current_token.value);
+
+                NODE node = __make_node(STRING_NODE, StringNode, string_node);
+
+                buffer.push_back(
+                    std::make_pair(RPN_NODE, std::make_any<NODE>(node))
+                );
+
+                break;
+            }
+
+            case TokenTypes::TT_DOLLAR_SIGN: {
+                buffer.push_back(
+                    std::make_pair(
+                        RPN_NODE,
+                        std::make_any<NODE>(this->parse_variable_usage())
+                    )
+                );
+
+                this->index--;
+
+                break;
+            }
+
+            default: {
+                buffer.push_back(
+                    std::make_pair(RPN_TOKEN, std::make_any<Token>(this->current_token))
+                );
+
+                break;
+            }
+        }
 
         this->next_token();
     }
 
-    node.expression = this->to_rpn(tokens);
+    node.expression = this->to_rpn(buffer);
 
     return node;
 }
@@ -85,14 +157,86 @@ GenericNode Parser::parse_expression(enum TokenTypes termination_token) {
 GenericNode Parser::parse_expression(std::vector<enum TokenTypes> termination_tokens) {
     GenericNode node;
 
-    std::deque<Token> tokens;
+    RPN_BUFFER buffer;
     while (!__is_in_vector(this->current_token.type, termination_tokens)) {
-        tokens.push_back(this->current_token);
+       switch (this->current_token.type) {
+            case TokenTypes::TT_ID: {
+                if (this->peek(1).type == TT_LEFT_PAREN) {
+                    buffer.push_back(
+                        std::make_pair(
+                            RPN_NODE,
+                            std::make_any<NODE>(this->parse_function_call())
+                        )
+                    );
+
+                    this->index--;
+                }
+
+                break;
+            }
+
+            case TokenTypes::TT_INTEGER: {
+                IntegerNode integer_node(atoi(this->current_token.value.c_str()));
+
+                NODE node = __make_node(INTEGER_NODE, IntegerNode, integer_node);
+
+                buffer.push_back(
+                    std::make_pair(RPN_NODE, std::make_any<NODE>(node))
+                );
+
+                break;
+            }
+
+            case TokenTypes::TT_FLOAT: {
+                FloatNode float_node(atof(this->current_token.value.c_str()));
+
+                NODE node = __make_node(FLOAT_NODE, FloatNode, float_node);
+
+                buffer.push_back(
+                    std::make_pair(RPN_NODE, std::make_any<NODE>(node))
+                );
+
+                break;
+            }
+
+            case TokenTypes::TT_STRING: {
+                StringNode string_node(this->current_token.value);
+
+                NODE node = __make_node(STRING_NODE, StringNode, string_node);
+
+                buffer.push_back(
+                    std::make_pair(RPN_NODE, std::make_any<NODE>(node))
+                );
+
+                break;
+            }
+
+            case TokenTypes::TT_DOLLAR_SIGN: {
+                buffer.push_back(
+                    std::make_pair(
+                        RPN_NODE,
+                        std::make_any<NODE>(this->parse_variable_usage())
+                    )
+                );
+
+                this->index--;
+
+                break;
+            }
+
+            default: {
+                buffer.push_back(
+                    std::make_pair(RPN_TOKEN, std::make_any<Token>(this->current_token))
+                );
+
+                break;
+            }
+        }
 
         this->next_token();
     }
 
-    node.expression = this->to_rpn(tokens);
+    node.expression = this->to_rpn(buffer);
 
     return node;
 }
@@ -303,103 +447,167 @@ NODE Parser::parse_function_definition() {
     );
 }
 
-RPN Parser::to_rpn(std::deque<Token>& tokens) {
-    RPN queue;
+RPN_BUFFER Parser::to_rpn(RPN_BUFFER buffer) {
+    RPN_BUFFER queue;
     std::vector<Token> stack;
 
-    for (int i = 0; i < tokens.size(); i++) {
-        switch (tokens[i].type) {
-            case TokenTypes::TT_INTEGER: {
-                IntegerNode integer_node(atoi(tokens[i].value.c_str()));
+    for (auto item: buffer) {
+        if (item.first) {
+            queue.push_back(item);
+        }
+        else {
+            Token token = std::any_cast<Token>(item.second);
 
-                NODE node = __make_node(INTEGER_NODE, IntegerNode, integer_node);
+            switch (token.type) {
+                case TokenTypes::TT_LEFT_PAREN:
+                    stack.push_back(token);
+                    break;
 
-                queue.push_back(
-                    std::make_pair(true, std::make_any<NODE>(node))
-                );
+                case TokenTypes::TT_RIGHT_PAREN: {
+                    bool match = RPN_TOKEN;
 
-                break;
-            }
-
-            case TokenTypes::TT_FLOAT: {
-                FloatNode float_node(atof(tokens[i].value.c_str()));
-
-                NODE node = __make_node(FLOAT_NODE, FloatNode, float_node);
-
-                queue.push_back(
-                    std::make_pair(true, std::make_any<NODE>(node))
-                );
-
-                break;
-            }
-
-            case TokenTypes::TT_STRING: {
-                StringNode string_node(tokens[i].value);
-
-                NODE node = __make_node(STRING_NODE, StringNode, string_node);
-
-                queue.push_back(
-                    std::make_pair(true, std::make_any<NODE>(node))
-                );
-
-                break;
-            }
-
-            case TokenTypes::TT_LEFT_PAREN:
-                stack.push_back(tokens[i]);
-                break;
-
-            case TokenTypes::TT_RIGHT_PAREN: {
-                bool match = false;
-
-                while (!stack.empty() && stack.back().type != TokenTypes::TT_LEFT_PAREN) {
-                    queue.push_back(
-                        std::make_pair(false, std::make_any<Token>(stack.back()))
-                    );
-                    stack.pop_back();
-
-                    match = true;
-                }
-
-                if (!match && stack.empty()) {
-                    printf("Parser: Error: Mismatched parentheses\n");
-                    exit(EXIT_FAILURE);
-                }
-
-                stack.pop_back();
-
-                break;
-            }
-
-            default: { // operator
-                Token operator1 = tokens[i];
-                bool operator1_associativity = get_operator_right_associativity(operator1.type);
-                int operator1_precedence = get_operator_precedence(operator1.type);
-
-                while (!stack.empty()) {
-                    Token operator2 = stack.back();
-                    int operator2_precedence = get_operator_precedence(operator2.type);
-
-                    if (
-                        (!operator1_associativity && operator1_precedence <= operator2_precedence) ||
-                        (operator1_associativity && operator1_precedence < operator2_precedence)
-                    ) {
+                    while (!stack.empty() && stack.back().type != TokenTypes::TT_LEFT_PAREN) {
                         queue.push_back(
-                            std::make_pair(false, std::make_any<Token>(operator2))
+                            std::make_pair(RPN_TOKEN, std::make_any<Token>(stack.back()))
                         );
                         stack.pop_back();
 
-                        continue;
+                        match = true;
                     }
+
+                    if (!match && stack.empty()) {
+                        printf("Parser: Error: Mismatched parentheses\n");
+                        exit(EXIT_FAILURE);
+                    }
+
+                    stack.pop_back();
 
                     break;
                 }
 
-                stack.push_back(operator1);
+                default: {
+                    Token operator1 = token;
+                    bool operator1_associativity = get_operator_right_associativity(operator1.type);
+                    int operator1_precedence = get_operator_precedence(operator1.type);
 
-                break;
+                    while (!stack.empty()) {
+                        Token operator2 = stack.back();
+                        int operator2_precedence = get_operator_precedence(operator2.type);
+
+                        if (
+                            (!operator1_associativity && operator1_precedence <= operator2_precedence) ||
+                            (operator1_associativity && operator1_precedence < operator2_precedence)
+                        ) {
+                            queue.push_back(
+                                std::make_pair(RPN_TOKEN, std::make_any<Token>(operator2))
+                            );
+                            stack.pop_back();
+
+                            continue;
+                        }
+
+                        break;
+                    }
+
+                    stack.push_back(operator1);
+
+                    break;
+                }
             }
         }
+
+        // switch (tokens[i].type) {
+        //     case TokenTypes::TT_INTEGER: {
+        //         IntegerNode integer_node(atoi(tokens[i].value.c_str()));
+
+        //         NODE node = __make_node(INTEGER_NODE, IntegerNode, integer_node);
+
+        //         queue.push_back(
+        //             std::make_pair(true, std::make_any<NODE>(node))
+        //         );
+
+        //         break;
+        //     }
+
+        //     case TokenTypes::TT_FLOAT: {
+        //         FloatNode float_node(atof(tokens[i].value.c_str()));
+
+        //         NODE node = __make_node(FLOAT_NODE, FloatNode, float_node);
+
+        //         queue.push_back(
+        //             std::make_pair(true, std::make_any<NODE>(node))
+        //         );
+
+        //         break;
+        //     }
+
+        //     case TokenTypes::TT_STRING: {
+        //         StringNode string_node(tokens[i].value);
+
+        //         NODE node = __make_node(STRING_NODE, StringNode, string_node);
+
+        //         queue.push_back(
+        //             std::make_pair(true, std::make_any<NODE>(node))
+        //         );
+
+        //         break;
+        //     }
+
+        //     case TokenTypes::TT_LEFT_PAREN:
+        //         stack.push_back(tokens[i]);
+        //         break;
+
+        //     case TokenTypes::TT_RIGHT_PAREN: {
+        //         bool match = false;
+
+        //         while (!stack.empty() && stack.back().type != TokenTypes::TT_LEFT_PAREN) {
+        //             queue.push_back(
+        //                 std::make_pair(false, std::make_any<Token>(stack.back()))
+        //             );
+        //             stack.pop_back();
+
+        //             match = true;
+        //         }
+
+        //         if (!match && stack.empty()) {
+        //             printf("Parser: Error: Mismatched parentheses\n");
+        //             exit(EXIT_FAILURE);
+        //         }
+
+        //         stack.pop_back();
+
+        //         break;
+        //     }
+
+        //     default: { // operator
+        //         Token operator1 = tokens[i];
+        //         bool operator1_associativity = get_operator_right_associativity(operator1.type);
+        //         int operator1_precedence = get_operator_precedence(operator1.type);
+
+        //         while (!stack.empty()) {
+        //             Token operator2 = stack.back();
+        //             int operator2_precedence = get_operator_precedence(operator2.type);
+
+        //             if (
+        //                 (!operator1_associativity && operator1_precedence <= operator2_precedence) ||
+        //                 (operator1_associativity && operator1_precedence < operator2_precedence)
+        //             ) {
+        //                 queue.push_back(
+        //                     std::make_pair(false, std::make_any<Token>(operator2))
+        //                 );
+        //                 stack.pop_back();
+
+        //                 continue;
+        //             }
+
+        //             break;
+        //         }
+
+        //         stack.push_back(operator1);
+
+        //         break;
+        //     }
+        // }
     }
 
     while (!stack.empty()) {
@@ -409,7 +617,7 @@ RPN Parser::to_rpn(std::deque<Token>& tokens) {
         }
 
         queue.push_back(std::move(
-            std::make_pair(false, std::make_any<Token>(stack.back()))
+            std::make_pair(RPN_TOKEN, std::make_any<Token>(stack.back()))
         ));
         stack.pop_back();
     }
@@ -420,8 +628,9 @@ RPN Parser::to_rpn(std::deque<Token>& tokens) {
 void Parser::eat(enum TokenTypes expected_type) {
     if (this->current_token.type != expected_type) {
         printf(
-            "Parser: Error: Unexpected token: '%s'\n",
-            this->current_token.value.c_str()
+            "Parser: Error: Unexpected token: '%s' %i\n",
+            this->current_token.value.c_str(),
+            expected_type
         );
 
         exit(EXIT_FAILURE);

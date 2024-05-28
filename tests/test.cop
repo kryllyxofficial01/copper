@@ -1,1 +1,1 @@
-var test: int = f(10) + 8 + i;
+var test: int = f(10, x()) + 8 + $i;

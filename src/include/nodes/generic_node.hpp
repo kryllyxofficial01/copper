@@ -7,7 +7,7 @@
 
 class GenericNode {
     public:
-        RPN expression;
+        RPN_BUFFER expression;
 };
 
 #endif

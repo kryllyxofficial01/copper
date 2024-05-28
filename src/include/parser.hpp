@@ -38,7 +38,7 @@ class Parser {
         NODE parse_function_call();
         NODE parse_function_definition();
 
-        RPN to_rpn(std::deque<Token>& tokens);
+        RPN_BUFFER to_rpn(RPN_BUFFER buffer);
 
         void eat(enum TokenTypes expected_type);
         void next_token();
