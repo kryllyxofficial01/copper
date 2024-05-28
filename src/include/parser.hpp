@@ -39,10 +39,13 @@ class Parser {
         NODE parse_function_definition();
 
         RPN_BUFFER to_rpn(RPN_BUFFER buffer);
+        std::pair<bool, std::any> get_next_node();
 
         void eat(enum TokenTypes expected_type);
         void next_token();
         Token peek(int offset);
+
+        std::pair<bool, std::any> update_index_with(std::pair<bool, std::any> item);
 
         std::vector<Token> tokens;
 

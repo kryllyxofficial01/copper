@@ -72,79 +72,7 @@ GenericNode Parser::parse_expression(enum TokenTypes termination_token) {
 
     RPN_BUFFER buffer;
     while (this->current_token.type != termination_token) {
-        switch (this->current_token.type) {
-            case TokenTypes::TT_ID: {
-                if (this->peek(1).type == TT_LEFT_PAREN) {
-                    buffer.push_back(
-                        std::make_pair(
-                            RPN_NODE,
-                            std::make_any<NODE>(this->parse_function_call())
-                        )
-                    );
-
-                    this->index--;
-                }
-
-                break;
-            }
-
-            case TokenTypes::TT_INTEGER: {
-                IntegerNode integer_node(atoi(this->current_token.value.c_str()));
-
-                NODE node = __make_node(INTEGER_NODE, IntegerNode, integer_node);
-
-                buffer.push_back(
-                    std::make_pair(RPN_NODE, std::make_any<NODE>(node))
-                );
-
-                break;
-            }
-
-            case TokenTypes::TT_FLOAT: {
-                FloatNode float_node(atof(this->current_token.value.c_str()));
-
-                NODE node = __make_node(FLOAT_NODE, FloatNode, float_node);
-
-                buffer.push_back(
-                    std::make_pair(RPN_NODE, std::make_any<NODE>(node))
-                );
-
-                break;
-            }
-
-            case TokenTypes::TT_STRING: {
-                StringNode string_node(this->current_token.value);
-
-                NODE node = __make_node(STRING_NODE, StringNode, string_node);
-
-                buffer.push_back(
-                    std::make_pair(RPN_NODE, std::make_any<NODE>(node))
-                );
-
-                break;
-            }
-
-            case TokenTypes::TT_DOLLAR_SIGN: {
-                buffer.push_back(
-                    std::make_pair(
-                        RPN_NODE,
-                        std::make_any<NODE>(this->parse_variable_usage())
-                    )
-                );
-
-                this->index--;
-
-                break;
-            }
-
-            default: {
-                buffer.push_back(
-                    std::make_pair(RPN_TOKEN, std::make_any<Token>(this->current_token))
-                );
-
-                break;
-            }
-        }
+        buffer.push_back(this->get_next_node());
 
         this->next_token();
     }
@@ -159,79 +87,7 @@ GenericNode Parser::parse_expression(std::vector<enum TokenTypes> termination_to
 
     RPN_BUFFER buffer;
     while (!__is_in_vector(this->current_token.type, termination_tokens)) {
-       switch (this->current_token.type) {
-            case TokenTypes::TT_ID: {
-                if (this->peek(1).type == TT_LEFT_PAREN) {
-                    buffer.push_back(
-                        std::make_pair(
-                            RPN_NODE,
-                            std::make_any<NODE>(this->parse_function_call())
-                        )
-                    );
-
-                    this->index--;
-                }
-
-                break;
-            }
-
-            case TokenTypes::TT_INTEGER: {
-                IntegerNode integer_node(atoi(this->current_token.value.c_str()));
-
-                NODE node = __make_node(INTEGER_NODE, IntegerNode, integer_node);
-
-                buffer.push_back(
-                    std::make_pair(RPN_NODE, std::make_any<NODE>(node))
-                );
-
-                break;
-            }
-
-            case TokenTypes::TT_FLOAT: {
-                FloatNode float_node(atof(this->current_token.value.c_str()));
-
-                NODE node = __make_node(FLOAT_NODE, FloatNode, float_node);
-
-                buffer.push_back(
-                    std::make_pair(RPN_NODE, std::make_any<NODE>(node))
-                );
-
-                break;
-            }
-
-            case TokenTypes::TT_STRING: {
-                StringNode string_node(this->current_token.value);
-
-                NODE node = __make_node(STRING_NODE, StringNode, string_node);
-
-                buffer.push_back(
-                    std::make_pair(RPN_NODE, std::make_any<NODE>(node))
-                );
-
-                break;
-            }
-
-            case TokenTypes::TT_DOLLAR_SIGN: {
-                buffer.push_back(
-                    std::make_pair(
-                        RPN_NODE,
-                        std::make_any<NODE>(this->parse_variable_usage())
-                    )
-                );
-
-                this->index--;
-
-                break;
-            }
-
-            default: {
-                buffer.push_back(
-                    std::make_pair(RPN_TOKEN, std::make_any<Token>(this->current_token))
-                );
-
-                break;
-            }
-        }
+        buffer.push_back(this->get_next_node());
 
         this->next_token();
     }
@@ -532,12 +388,59 @@ RPN_BUFFER Parser::to_rpn(RPN_BUFFER buffer) {
     return queue;
 }
 
+std::pair<bool, std::any> Parser::get_next_node() {
+    switch (this->current_token.type) {
+        case TokenTypes::TT_ID: {
+            if (this->peek(1).type == TT_LEFT_PAREN) {
+                return this->update_index_with(std::make_pair(
+                    RPN_NODE,
+                    std::make_any<NODE>(this->parse_function_call())
+                ));
+            }
+
+            break;
+        }
+
+        case TokenTypes::TT_INTEGER: {
+            IntegerNode integer_node(atoi(this->current_token.value.c_str()));
+
+            NODE node = __make_node(INTEGER_NODE, IntegerNode, integer_node);
+
+            return std::make_pair(RPN_NODE, std::make_any<NODE>(node));
+        }
+
+        case TokenTypes::TT_FLOAT: {
+            FloatNode float_node(atof(this->current_token.value.c_str()));
+
+            NODE node = __make_node(FLOAT_NODE, FloatNode, float_node);
+
+            return std::make_pair(RPN_NODE, std::make_any<NODE>(node));
+        }
+
+        case TokenTypes::TT_STRING: {
+            StringNode string_node(this->current_token.value);
+
+            NODE node = __make_node(STRING_NODE, StringNode, string_node);
+
+            return std::make_pair(RPN_NODE, std::make_any<NODE>(node));
+        }
+
+        case TokenTypes::TT_DOLLAR_SIGN: {
+            return this->update_index_with(std::make_pair(
+                RPN_NODE,
+                std::make_any<NODE>(this->parse_variable_usage())
+            ));
+        }
+
+        default: return std::make_pair(RPN_TOKEN, std::make_any<Token>(this->current_token));
+    }
+}
+
 void Parser::eat(enum TokenTypes expected_type) {
     if (this->current_token.type != expected_type) {
         printf(
-            "Parser: Error: Unexpected token: '%s' %i\n",
-            this->current_token.value.c_str(),
-            expected_type
+            "Parser: Error: Unexpected token: '%s'\n",
+            this->current_token.value.c_str()
         );
 
         exit(EXIT_FAILURE);
@@ -554,4 +457,10 @@ Token Parser::peek(int offset) {
     return this->tokens.at(
         (this->index + offset) - 1
     );
+}
+
+std::pair<bool, std::any> Parser::update_index_with(std::pair<bool, std::any> item) {
+    this->index--;
+
+    return item;
 }
