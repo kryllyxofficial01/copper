@@ -8,7 +8,7 @@
 
 #define VARIABLE std::tuple<std::string, enum Types, std::any>
 
-enum Types {
+enum BuiltinTypes {
     INTEGER,
     FLOAT,
     STRING

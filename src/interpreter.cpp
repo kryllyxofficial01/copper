@@ -34,8 +34,8 @@ void Interpreter::interpret_variable_definition(scope_t* scope) {
         scope->variables.push_back(
             __make_variable(
                 variable_node.name,
-                Types::INTEGER,
-                this->evaluate_expression(variable_node.value, Types::INTEGER)
+                BuiltinTypes::INTEGER,
+                this->evaluate_expression(variable_node.value, BuiltinTypes::INTEGER)
             )
         );
     }
@@ -43,8 +43,8 @@ void Interpreter::interpret_variable_definition(scope_t* scope) {
         scope->variables.push_back(
             __make_variable(
                 variable_node.name,
-                Types::FLOAT,
-                this->evaluate_expression(variable_node.value, Types::FLOAT)
+                BuiltinTypes::FLOAT,
+                this->evaluate_expression(variable_node.value, BuiltinTypes::FLOAT)
             )
         );
     }
@@ -52,17 +52,17 @@ void Interpreter::interpret_variable_definition(scope_t* scope) {
         scope->variables.push_back(
             __make_variable(
                 variable_node.name,
-                Types::STRING,
-                this->evaluate_expression(variable_node.value, Types::STRING)
+                BuiltinTypes::STRING,
+                this->evaluate_expression(variable_node.value, BuiltinTypes::STRING)
             )
         );
     }
 }
 
-std::any Interpreter::evaluate_expression(GenericNode node, enum Types value_type) {
+std::any Interpreter::evaluate_expression(GenericNode node, enum BuiltinTypes value_type) {
     switch (value_type) {
-        case Types::INTEGER:
-        case Types::FLOAT: {
+        case BuiltinTypes::INTEGER:
+        case BuiltinTypes::FLOAT: {
             std::stack<double> stack;
 
             for (auto token: node.expression) {
@@ -107,15 +107,15 @@ std::any Interpreter::evaluate_expression(GenericNode node, enum Types value_typ
                 }
             }
 
-            if (value_type == Types::INTEGER) {
+            if (value_type == BuiltinTypes::INTEGER) {
                 return std::make_any<int>(trunc(stack.top()));
             }
-            else if (value_type == Types::FLOAT) {
+            else if (value_type == BuiltinTypes::FLOAT) {
                 return std::make_any<double>(stack.top());
             }
         }
 
-        case Types::STRING: {
+        case BuiltinTypes::STRING: {
             std::stack<std::string> stack;
 
             for (auto token: node.expression) {

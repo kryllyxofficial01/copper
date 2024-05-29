@@ -26,7 +26,7 @@ class Interpreter {
         void interpret_next_node();
         void interpret_variable_definition(scope_t* scope);
 
-        std::any evaluate_expression(GenericNode node, enum Types value_type);
+        std::any evaluate_expression(GenericNode node, enum BuiltinTypes value_type);
 
         void next_node();
 
