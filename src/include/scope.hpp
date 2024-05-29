@@ -6,7 +6,7 @@
 #include <string>
 #include <any>
 
-#define VARIABLE std::tuple<std::string, enum Types, std::any>
+#define VARIABLE std::tuple<std::string, enum BuiltinTypes, std::any>
 
 enum BuiltinTypes {
     INTEGER,

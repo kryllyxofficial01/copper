@@ -12,7 +12,7 @@ FILE=
 all: compile
 
 compile: clean
-	$(GXX) $(GXX_FLAGS) $(SRC) -o $(BUILD)/$(EXEC)
+	time $(GXX) $(GXX_FLAGS) $(SRC) -o $(BUILD)/$(EXEC)
 
 clean: common
 	rm -rf $(BUILD)/*
