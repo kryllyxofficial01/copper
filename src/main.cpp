@@ -4,10 +4,13 @@
 
 #include "include/lexer.hpp"
 #include "include/parser.hpp"
+#include "include/interpreter.hpp"
+
 #include "include/token.hpp"
 #include "include/utils.hpp"
-#include "include/nodes/node.hpp"
+
 #include "include/nodes/master_node.hpp"
+#include "include/nodes/node.hpp"
 
 int main(int argc, const char* argv[]) {
     if (argc < 2) {
@@ -34,6 +37,9 @@ int main(int argc, const char* argv[]) {
 
     Parser parser(tokens);
     MasterNode ast = parser.parse();
+
+    Interpreter interpreter(ast);
+    interpreter.interpret();
 
     return 0;
 }

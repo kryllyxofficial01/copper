@@ -17,3 +17,9 @@ int get_operator_precedence(enum TokenTypes _operator) {
 bool get_operator_right_associativity(enum TokenTypes _operator) {
     return _operator == TokenTypes::TT_CARET;
 }
+
+std::string perform_string_operation(std::string a, std::string b, enum TokenTypes _operator) {
+    switch (_operator) {
+        case TokenTypes::TT_PLUS_SIGN: return a + b;
+    }
+}

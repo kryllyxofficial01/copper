@@ -3,7 +3,6 @@
 
 #include <string>
 
-
 class ArgumentNode {
     public:
         std::string name;

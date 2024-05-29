@@ -303,6 +303,7 @@ NODE Parser::parse_function_definition() {
     );
 }
 
+// credit: https://gist.github.com/t-mat/b9f681b7591cdae712f6
 RPN_BUFFER Parser::to_rpn(RPN_BUFFER buffer) {
     RPN_BUFFER queue;
     std::vector<Token> stack;
