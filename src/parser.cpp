@@ -86,7 +86,7 @@ GenericNode Parser::parse_expression(std::vector<enum TokenTypes> termination_to
     GenericNode node;
 
     RPN_BUFFER buffer;
-    while (!__is_in_vector(this->current_token.type, termination_tokens)) {
+    while (!is_in_vector(this->current_token.type, termination_tokens)) {
         buffer.push_back(this->get_next_node());
 
         this->next_token();
@@ -114,7 +114,7 @@ NODE Parser::parse_variable_definition() {
 
     variable_definition_node.value = this->parse_expression(TT_SEMICOLON);
 
-    return __make_node(
+    return make_node(
         VARIABLE_DEFINITION_NODE,
         VariableDefinitionNode,
         variable_definition_node
@@ -136,7 +136,7 @@ NODE Parser::parse_variable_usage() {
 
         variable_redefinition_node.value = this->parse_expression(TT_SEMICOLON);
 
-        return __make_node(
+        return make_node(
             VARIABLE_REDEFINITION_NODE,
             VariableRedefinitionNode,
             variable_redefinition_node
@@ -147,7 +147,7 @@ NODE Parser::parse_variable_usage() {
 
     variable_call_node.name = variable_name;
 
-    return __make_node(
+    return make_node(
         VARIABLE_CALL_NODE,
         VariableCallNode,
         variable_call_node
@@ -177,14 +177,14 @@ NODE Parser::parse_if_statement() {
 
         if_else_statement_node.else_body = this->parse_block();
 
-        return __make_node(
+        return make_node(
             IF_ELSE_STATEMENT_NODE,
             IfElseStatementNode,
             if_else_statement_node
         );
     }
 
-    return __make_node(
+    return make_node(
         IF_STATEMENT_NODE,
         IfStatementNode,
         if_statement_node
@@ -214,7 +214,7 @@ NODE Parser::parse_for_loop() {
 
     for_loop_node.body = this->parse_block();
 
-    return __make_node(
+    return make_node(
         FOR_LOOP_NODE,
         ForLoopNode,
         for_loop_node
@@ -241,7 +241,7 @@ NODE Parser::parse_function_call() {
 
     this->eat(TT_RIGHT_PAREN);
 
-    return __make_node(
+    return make_node(
         FUNCTION_CALL_NODE,
         FunctionCallNode,
         function_call_node
@@ -296,7 +296,7 @@ NODE Parser::parse_function_definition() {
 
     this->eat(TT_RIGHT_BRACE);
 
-    return __make_node(
+    return make_node(
         FUNCTION_DEFINITION_NODE,
         FunctionDefinitionNode,
         function_definition_node
@@ -321,11 +321,11 @@ RPN_BUFFER Parser::to_rpn(RPN_BUFFER buffer) {
                     break;
 
                 case TokenTypes::TT_RIGHT_PAREN: {
-                    bool match = RPN_TOKEN;
+                    bool match = RPN_BUFFER_TOKEN;
 
                     while (!stack.empty() && stack.back().type != TokenTypes::TT_LEFT_PAREN) {
                         queue.push_back(
-                            std::make_pair(RPN_TOKEN, std::make_any<Token>(stack.back()))
+                            std::make_pair(RPN_BUFFER_TOKEN, std::make_any<Token>(stack.back()))
                         );
                         stack.pop_back();
 
@@ -356,7 +356,7 @@ RPN_BUFFER Parser::to_rpn(RPN_BUFFER buffer) {
                             (operator1_associativity && operator1_precedence < operator2_precedence)
                         ) {
                             queue.push_back(
-                                std::make_pair(RPN_TOKEN, std::make_any<Token>(operator2))
+                                std::make_pair(RPN_BUFFER_TOKEN, std::make_any<Token>(operator2))
                             );
                             stack.pop_back();
 
@@ -381,7 +381,7 @@ RPN_BUFFER Parser::to_rpn(RPN_BUFFER buffer) {
         }
 
         queue.push_back(std::move(
-            std::make_pair(RPN_TOKEN, std::make_any<Token>(stack.back()))
+            std::make_pair(RPN_BUFFER_TOKEN, std::make_any<Token>(stack.back()))
         ));
         stack.pop_back();
     }
@@ -394,7 +394,7 @@ std::pair<bool, std::any> Parser::get_next_node() {
         case TokenTypes::TT_ID: {
             if (this->peek(1).type == TT_LEFT_PAREN) {
                 return this->update_index_with(std::make_pair(
-                    RPN_NODE,
+                    RPN_BUFFER_NODE,
                     std::make_any<NODE>(this->parse_function_call())
                 ));
             }
@@ -405,35 +405,35 @@ std::pair<bool, std::any> Parser::get_next_node() {
         case TokenTypes::TT_INTEGER: {
             IntegerNode integer_node(atoi(this->current_token.value.c_str()));
 
-            NODE node = __make_node(INTEGER_NODE, IntegerNode, integer_node);
+            NODE node = make_node(INTEGER_NODE, IntegerNode, integer_node);
 
-            return std::make_pair(RPN_NODE, std::make_any<NODE>(node));
+            return std::make_pair(RPN_BUFFER_NODE, std::make_any<NODE>(node));
         }
 
         case TokenTypes::TT_FLOAT: {
             FloatNode float_node(atof(this->current_token.value.c_str()));
 
-            NODE node = __make_node(FLOAT_NODE, FloatNode, float_node);
+            NODE node = make_node(FLOAT_NODE, FloatNode, float_node);
 
-            return std::make_pair(RPN_NODE, std::make_any<NODE>(node));
+            return std::make_pair(RPN_BUFFER_NODE, std::make_any<NODE>(node));
         }
 
         case TokenTypes::TT_STRING: {
             StringNode string_node(this->current_token.value);
 
-            NODE node = __make_node(STRING_NODE, StringNode, string_node);
+            NODE node = make_node(STRING_NODE, StringNode, string_node);
 
-            return std::make_pair(RPN_NODE, std::make_any<NODE>(node));
+            return std::make_pair(RPN_BUFFER_NODE, std::make_any<NODE>(node));
         }
 
         case TokenTypes::TT_DOLLAR_SIGN: {
             return this->update_index_with(std::make_pair(
-                RPN_NODE,
+                RPN_BUFFER_NODE,
                 std::make_any<NODE>(this->parse_variable_usage())
             ));
         }
 
-        default: return std::make_pair(RPN_TOKEN, std::make_any<Token>(this->current_token));
+        default: return std::make_pair(RPN_BUFFER_TOKEN, std::make_any<Token>(this->current_token));
     }
 }
 

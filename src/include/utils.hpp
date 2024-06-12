@@ -15,26 +15,26 @@
 
 #define RPN_BUFFER std::deque<std::pair<bool, std::any>>
 
-#define RPN_TOKEN false
-#define RPN_NODE true
+#define RPN_BUFFER_TOKEN false
+#define RPN_BUFFER_NODE true
 
 #define __WHITESPACE__ " \n\t\r\v\f"
 
-#define __make_token(t, v) (Token) { \
+#define make_token(t, v) (Token) { \
         .type = t, \
         .value = v \
     }
-#define __make_node(nt, t, n) std::make_pair(nt, std::make_any<t>(n));
-#define __make_variable(n, t, v) std::make_tuple(n, t, v)
+#define make_node(nt, t, n) std::make_pair(nt, std::make_any<t>(n));
+#define make_variable(n, t, v) std::make_tuple(n, t, v)
 
-#define __is_in_vector(e, v) (std::find(v.begin(), v.end(), e) != v.end())
+#define is_in_vector(e, v) (std::find(v.begin(), v.end(), e) != v.end())
 
 std::string trim(std::string string, std::string whitespace);
 
 int get_operator_precedence(enum TokenTypes _operator);
 bool get_operator_right_associativity(enum TokenTypes _operator);
 
-template<typename T> T perform_operation(T a, T b, enum TokenTypes _operator) {
+template<typename T> T perform_numeric_operation(T a, T b, enum TokenTypes _operator) {
     switch (_operator) {
         case TokenTypes::TT_PLUS_SIGN: return a + b;
         case TokenTypes::TT_HYPHEN: return a - b;

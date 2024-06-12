@@ -32,7 +32,7 @@ void Interpreter::interpret_variable_definition(scope_t* scope) {
 
     if (variable_node.value_type == "int") {
         scope->variables.push_back(
-            __make_variable(
+            make_variable(
                 variable_node.name,
                 BuiltinTypes::INTEGER,
                 this->evaluate_expression(variable_node.value, BuiltinTypes::INTEGER)
@@ -41,7 +41,7 @@ void Interpreter::interpret_variable_definition(scope_t* scope) {
     }
     else if (variable_node.value_type == "float") {
         scope->variables.push_back(
-            __make_variable(
+            make_variable(
                 variable_node.name,
                 BuiltinTypes::FLOAT,
                 this->evaluate_expression(variable_node.value, BuiltinTypes::FLOAT)
@@ -50,7 +50,7 @@ void Interpreter::interpret_variable_definition(scope_t* scope) {
     }
     else if (variable_node.value_type == "string") {
         scope->variables.push_back(
-            __make_variable(
+            make_variable(
                 variable_node.name,
                 BuiltinTypes::STRING,
                 this->evaluate_expression(variable_node.value, BuiltinTypes::STRING)
@@ -60,107 +60,85 @@ void Interpreter::interpret_variable_definition(scope_t* scope) {
 }
 
 std::any Interpreter::evaluate_expression(GenericNode node, enum BuiltinTypes value_type) {
-    switch (value_type) {
-        case BuiltinTypes::INTEGER:
-        case BuiltinTypes::FLOAT: {
-            std::stack<double> stack;
+    if (value_type == BuiltinTypes::INTEGER || value_type == BuiltinTypes::FLOAT) {
+        std::stack<double> stack;
 
-            for (auto token: node.expression) {
-                if (token.first == RPN_NODE) {
-                    NODE _node = std::any_cast<NODE>(token.second);
+        for (auto item: node.expression) {
+            if (item.first == RPN_BUFFER_NODE) {
+                NODE item_node = std::any_cast<NODE>(item.second);
 
-                    switch (_node.first) {
-                        case NodeTypes::INTEGER_NODE: {
-                            stack.push(
-                                std::any_cast<IntegerNode>(_node.second).value
-                            );
-
-                            break;
-                        }
-
-                        case NodeTypes::FLOAT_NODE: {
-                            stack.push(
-                                std::any_cast<FloatNode>(_node.second).value
-                            );
-
-                            break;
-                        }
-
-                        case NodeTypes::STRING_NODE: {
-                            printf(
-                                "Interpreter: Error: Cannot evaluate string ('%s') to integer type\n",
-                                std::any_cast<StringNode>(_node.second).value.c_str()
-                            );
-
-                            exit(EXIT_FAILURE);
-                        }
-                    }
+                if (item_node.first == NodeTypes::INTEGER_NODE) {
+                    stack.push(
+                        std::any_cast<IntegerNode>(item_node.second).value
+                    );
                 }
-                else if (token.first == RPN_TOKEN) {
-                    double b = stack.top();
-                    stack.pop();
+                else if (item_node.first == NodeTypes::FLOAT_NODE) {
+                    stack.push(
+                        std::any_cast<FloatNode>(item_node.second).value
+                    );
+                }
+                else if (item_node.first == NodeTypes::STRING_NODE) {
+                    printf(
+                        "Interpreter: Error: Expected numeric value, got type string ('%s')\n",
+                        std::any_cast<StringNode>(item_node.second).value.c_str()
+                    );
 
-                    double a = stack.top();
-                    stack.pop();
-
-                    stack.push(perform_operation(a, b, std::any_cast<Token>(token.second).type));
+                    exit(EXIT_FAILURE);
                 }
             }
+            else if (item.first == RPN_BUFFER_TOKEN) {
+                double b = stack.top();
+                stack.pop();
 
-            if (value_type == BuiltinTypes::INTEGER) {
-                return std::make_any<int>(trunc(stack.top()));
-            }
-            else if (value_type == BuiltinTypes::FLOAT) {
-                return std::make_any<double>(stack.top());
+                double a = stack.top();
+                stack.pop();
+
+                stack.push(perform_numeric_operation(a, b, std::any_cast<Token>(item.second).type));
             }
         }
 
-        case BuiltinTypes::STRING: {
-            std::stack<std::string> stack;
+        if (value_type == BuiltinTypes::INTEGER) {
+            return std::make_any<int>(trunc(stack.top()));
+        }
+        else if (value_type == BuiltinTypes::FLOAT) {
+            return std::make_any<double>(stack.top());
+        }
+    }
+    else if (value_type == BuiltinTypes::STRING) {
+        std::stack<std::string> stack;
 
-            for (auto token: node.expression) {
-                if (token.first == RPN_NODE) {
-                    NODE _node = std::any_cast<NODE>(token.second);
+        for (auto item: node.expression) {
+            if (item.first == RPN_BUFFER_NODE) {
+                NODE item_node = std::any_cast<NODE>(item.second);
 
-                    switch (_node.first) {
-                        case NodeTypes::INTEGER_NODE: {
-                            stack.push(
-                                std::to_string(std::any_cast<IntegerNode>(_node.second).value)
-                            );
-
-                            break;
-                        }
-
-                        case NodeTypes::FLOAT_NODE: {
-                            stack.push(
-                                std::to_string(std::any_cast<FloatNode>(_node.second).value)
-                            );
-
-                            break;
-                        }
-
-                        case NodeTypes::STRING_NODE: {
-                            stack.push(
-                                std::any_cast<StringNode>(_node.second).value
-                            );
-
-                            break;
-                        }
-                    }
+                if (item_node.first == NodeTypes::INTEGER_NODE) {
+                    stack.push(
+                        std::to_string(std::any_cast<IntegerNode>(item_node.second).value)
+                    );
                 }
-                else if (token.first == RPN_TOKEN) {
-                    std::string b = stack.top();
-                    stack.pop();
-
-                    std::string a = stack.top();
-                    stack.pop();
-
-                    stack.push(perform_string_operation(a, b, std::any_cast<Token>(token.second).type));
+                else if (item_node.first == NodeTypes::FLOAT_NODE) {
+                    stack.push(
+                        std::to_string(std::any_cast<FloatNode>(item_node.second).value)
+                    );
+                }
+                else if (item_node.first == NodeTypes::STRING_NODE) {
+                    stack.push(
+                        std::any_cast<StringNode>(item_node.second).value
+                    );
                 }
             }
+            else if (item.first == RPN_BUFFER_TOKEN) {
+                std::string b = stack.top();
+                stack.pop();
 
-            return std::make_any<std::string>(stack.top());
+                std::string a = stack.top();
+                stack.pop();
+
+                stack.push(perform_string_operation(a, b, std::any_cast<Token>(item.second).type));
+            }
         }
+
+        return std::make_any<std::string>(stack.top());
     }
 }
 
