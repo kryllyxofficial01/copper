@@ -37,3 +37,6 @@ build
 
 # Valgrind Debug Info
 vgcore*
+
+# Clangd
+.cache

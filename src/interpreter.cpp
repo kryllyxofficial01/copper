@@ -35,7 +35,7 @@ void Interpreter::interpret_variable_definition(scope_t* scope) {
             make_variable(
                 variable_node.name,
                 BuiltinTypes::INTEGER,
-                this->evaluate_expression(variable_node.value, BuiltinTypes::INTEGER)
+                this->evaluate_expression(variable_node.value, BuiltinTypes::INTEGER, scope)
             )
         );
     }
@@ -44,7 +44,7 @@ void Interpreter::interpret_variable_definition(scope_t* scope) {
             make_variable(
                 variable_node.name,
                 BuiltinTypes::FLOAT,
-                this->evaluate_expression(variable_node.value, BuiltinTypes::FLOAT)
+                this->evaluate_expression(variable_node.value, BuiltinTypes::FLOAT, scope)
             )
         );
     }
@@ -53,7 +53,7 @@ void Interpreter::interpret_variable_definition(scope_t* scope) {
             make_variable(
                 variable_node.name,
                 BuiltinTypes::STRING,
-                this->evaluate_expression(variable_node.value, BuiltinTypes::STRING)
+                this->evaluate_expression(variable_node.value, BuiltinTypes::STRING, scope)
             )
         );
     }

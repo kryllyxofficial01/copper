@@ -1,6 +1,6 @@
 GXX = g++
 
-GXX_FLAGS = -g -Wno-return-type
+GXX_FLAGS = -g -std=c++17 -Wno-return-type
 
 BUILD = build
 EXEC = main
