@@ -1,1 +1,2 @@
-var test: float = (2 + 3 * 5) / (1 * 5 + 3) * (1 - 4) + 5;
+var test: string = "test";
+$test = "tset";

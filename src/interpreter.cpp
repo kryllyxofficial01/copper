@@ -22,6 +22,10 @@ void Interpreter::interpret_next_node() {
         case NodeTypes::VARIABLE_DEFINITION_NODE:
             this->interpret_variable_definition(&this->global_scope);
             break;
+
+        case NodeTypes::VARIABLE_REDEFINITION_NODE:
+            this->interpret_variable_redefinition(&this->global_scope);
+            break;
     }
 }
 
@@ -56,6 +60,23 @@ void Interpreter::interpret_variable_definition(scope_t* scope) {
                 this->evaluate_expression(variable_node.value, BuiltinTypes::STRING)
             )
         );
+    }
+}
+
+void Interpreter::interpret_variable_redefinition(scope_t* scope) {
+    VariableRedefinitionNode variable_node = std::any_cast<VariableRedefinitionNode>(
+        this->current_node.second
+    );
+
+    for (int i = 0; i < scope->variables.size(); i++) {
+        auto variable = scope->variables.at(i);
+
+        if (std::get<VARIABLE_NAME>(variable) == variable_node.name) {
+            std::get<VARIABLE_VALUE>(variable) = this->evaluate_expression(
+                variable_node.value,
+                std::get<VARIABLE_TYPE>(variable)
+            );
+        }
     }
 }
 

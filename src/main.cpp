@@ -25,7 +25,7 @@ int main(int argc, const char* argv[]) {
     std::string line;
     std::string lines;
     while (getline(file, line)) {
-        line = trim(line, __WHITESPACE__);
+        line = trim(line, WHITESPACE);
 
         if (line != "" && line.substr(0, 2) != "//") {
             lines += line;
