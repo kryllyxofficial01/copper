@@ -77,8 +77,6 @@ void Interpreter::interpret_variable_redefinition(scope_t* scope) {
                 std::get<VARIABLE_TYPE>(variable),
                 scope
             );
-
-            printf("%i\n", std::any_cast<int>(std::get<VARIABLE_VALUE>(variable)));
         }
     }
 }
