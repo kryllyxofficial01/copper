@@ -27,7 +27,7 @@ class Interpreter {
         void interpret_variable_definition(scope_t* scope);
         void interpret_variable_redefinition(scope_t* scope);
 
-        std::any evaluate_expression(GenericNode node, enum BuiltinTypes value_type, scope_t* scope);
+        std::any evaluate_expression(RPN_BUFFER expression, enum BuiltinTypes value_type, scope_t* scope);
 
         void next_node();
 

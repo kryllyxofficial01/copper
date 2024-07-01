@@ -18,10 +18,6 @@
 #define RPN_BUFFER_TOKEN false
 #define RPN_BUFFER_NODE true
 
-#define VARIABLE_NAME 0
-#define VARIABLE_TYPE 1
-#define VARIABLE_VALUE 2
-
 #define WHITESPACE " \n\t\r\v\f"
 
 #define make_token(t, v) (Token) { \

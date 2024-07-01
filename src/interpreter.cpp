@@ -39,7 +39,7 @@ void Interpreter::interpret_variable_definition(scope_t* scope) {
             make_variable(
                 variable_node.name,
                 BuiltinTypes::INTEGER,
-                this->evaluate_expression(variable_node.value, BuiltinTypes::INTEGER, scope)
+                this->evaluate_expression(variable_node.value.expression, BuiltinTypes::INTEGER, scope)
             )
         );
     }
@@ -48,7 +48,7 @@ void Interpreter::interpret_variable_definition(scope_t* scope) {
             make_variable(
                 variable_node.name,
                 BuiltinTypes::FLOAT,
-                this->evaluate_expression(variable_node.value, BuiltinTypes::FLOAT, scope)
+                this->evaluate_expression(variable_node.value.expression, BuiltinTypes::FLOAT, scope)
             )
         );
     }
@@ -57,7 +57,7 @@ void Interpreter::interpret_variable_definition(scope_t* scope) {
             make_variable(
                 variable_node.name,
                 BuiltinTypes::STRING,
-                this->evaluate_expression(variable_node.value, BuiltinTypes::STRING, scope)
+                this->evaluate_expression(variable_node.value.expression, BuiltinTypes::STRING, scope)
             )
         );
     }
@@ -68,24 +68,27 @@ void Interpreter::interpret_variable_redefinition(scope_t* scope) {
         this->current_node.second
     );
 
-    for (int i = 0; i < scope->variables.size(); i++) {
-        VARIABLE variable = scope->variables.at(i);
+    auto variable = get_variable_by_name(variable_node.name, scope);
 
-        if (std::get<VARIABLE_NAME>(variable) == variable_node.name) {
-            std::get<VARIABLE_VALUE>(variable) = this->evaluate_expression(
-                variable_node.value,
-                std::get<VARIABLE_TYPE>(variable),
-                scope
-            );
-        }
+    if (variable.second != -1) {
+        std::get<VARIABLE_VALUE>(scope->variables.at(variable.second)) = this->evaluate_expression(
+            variable_node.value.expression,
+            std::get<VARIABLE_TYPE>(variable.first),
+            scope
+        );
+    }
+    else {
+        printf("Error: Interpreter: No variable named '%s' found in scope\n", variable_node.name.c_str());
+
+        exit(EXIT_FAILURE);
     }
 }
 
-std::any Interpreter::evaluate_expression(GenericNode node, enum BuiltinTypes value_type, scope_t* scope) {
+std::any Interpreter::evaluate_expression(RPN_BUFFER expression, enum BuiltinTypes value_type, scope_t* scope) {
     if (value_type == BuiltinTypes::INTEGER || value_type == BuiltinTypes::FLOAT) {
         std::stack<double> stack;
 
-        for (auto item: node.expression) {
+        for (auto item: expression) {
             if (item.first == RPN_BUFFER_NODE) {
                 NODE item_node = std::any_cast<NODE>(item.second);
 
@@ -161,7 +164,7 @@ std::any Interpreter::evaluate_expression(GenericNode node, enum BuiltinTypes va
     else if (value_type == BuiltinTypes::STRING) {
         std::stack<std::string> stack;
 
-        for (auto item: node.expression) {
+        for (auto item: expression) {
             if (item.first == RPN_BUFFER_NODE) {
                 NODE item_node = std::any_cast<NODE>(item.second);
 

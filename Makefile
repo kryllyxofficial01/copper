@@ -21,4 +21,4 @@ common:
 	mkdir -p $(BUILD)
 
 debug: compile
-	valgrind -s --track-origins=yes --leak-check=full $(BUILD)/$(EXEC) $(FILE)
+	valgrind -s --track-origins=yes $(BUILD)/$(EXEC) $(FILE)
