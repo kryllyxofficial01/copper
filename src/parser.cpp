@@ -204,7 +204,7 @@ NODE Parser::parse_for_loop() {
 
     this->eat(TT_SEMICOLON);
 
-    for_loop_node.limit= this->parse_expression(TT_SEMICOLON);
+    for_loop_node.limit = this->parse_expression(TT_SEMICOLON);
 
     this->eat(TT_SEMICOLON);
 

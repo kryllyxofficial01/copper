@@ -20,10 +20,7 @@
 
 #define WHITESPACE " \n\t\r\v\f"
 
-#define make_token(t, v) (Token) { \
-        .type = t, \
-        .value = v \
-    }
+#define make_token(t, v) (Token) { .type = t, .value = v }
 #define make_node(nt, t, n) std::make_pair(nt, std::make_any<t>(n));
 #define make_variable(n, t, v) std::make_tuple(n, t, v)
 
